@@ -1,0 +1,18 @@
+[
+  'className:"hidden sm:flex h-10 px-5 rounded-full bg-[#2563EB] text-white text-[13px] font-semibold hover:bg-[#1D4ED8] transition shadow-[0_4px_14px_rg',
+  'className:"hidden sm:flex h-10 px-5 rounded-full border border-[#E5E7EB] text-[13px] font-semibold hover:bg-[#F9FAFB] transition items-center justify-',
+  'onClick:()=>Ut("Google"),className:"group h-[48px] w-full rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center gap-2.5 text-',
+  'onClick:()=>Ut("Facebook"),className:"h-[48px] w-full rounded-full bg-[#1877F2] text-white flex items-center justify-center gap-2.5 text-[14px] font-s',
+  'onClick:()=>Ut("Instagram"),className:"relative h-[48px] w-full rounded-full bg-white flex items-center justify-center gap-2.5 text-[14px] font-semibo',
+  'onClick:()=>Ut("YouTube"),className:"h-[48px] w-full rounded-full bg-[#FF0000] text-white flex items-center justify-center gap-2.5 text-[14px] font-se',
+  'onClick:()=>g(P.v),className:`h-9 px-4 rounded-full border text-[13px] font-medium transition flex items-center gap-1.5 ${h===P.v?"bg-[#111827] text-w',
+  'type:"button",onClick:()=>r(!n),className:"absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 grid place-items-center text-[#9CA3AF] hover:text-[#11182',
+  'type:"button",onClick:()=>i(!l),className:"absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 grid place-items-center text-[#9CA3AF] hover:text-[#11182',
+  'disabled:!bl,className:`group relative w-full h-[52px] rounded-full bg-[#2563EB] text-white text-[14px] font-semibold tracking-wide flex items-center ',
+  'onClick:()=>t("login"),className:"text-[#2563EB] font-semibold hover:underline",children:"Login to your account"',
+  'type:"button",onClick:()=>r(!n),className:"absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 grid place-items-center text-[#9CA3AF] hover:text-[#11182',
+  'className:"w-full h-[52px] rounded-full bg-[#2563EB] text-white text-[14px] font-semibold flex items-center justify-center gap-2 hover:bg-[#1D4ED8] ho',
+  'onClick:()=>t("register"),className:"text-[#2563EB] font-semibold hover:underline",children:"Create your magic identity ✨"',
+  'onClick:()=>Ut("Invoice download"),className:"w-8 h-8 rounded-full bg-[#111827] text-white grid place-items-center hover:bg-black transition",children',
+  'onClick:()=>Ut("Referral copy"),className:"text-[11px] font-bold bg-[#0F172A] text-white px-2.5 py-1 rounded-full",children:"Copy"'
+]

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - User Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="text-slate-900 overflow-hidden h-screen flex">
+  
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between h-full">
+    <div>
+      <div class="h-[72px] flex items-center px-6 border-b border-slate-100">
+        <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIbGNtcwIQAABtbnRyUkdCIFhZWiAH4gADABQACQAOAB1hY3NwTVNGVAAAAABzYXdzY3RybAAAAAAAAAAAAAAAAAAA9tYAAQAAAADTLWhhbmSdkQA9QICwPUB0LIGepSKOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAABxjcHJ0AAABDAAAAAx3dHB0AAABGAAAABRyWFlaAAABLAAAABRnWFlaAAABQAAAABRiWFlaAAABVAAAABRyVFJDAAABaAAAAGBnVFJDAAABaAAAAGBiVFJDAAABaAAAAGBkZXNjAAAAAAAAAAV1UkdCAAAAAAAAAAAAAAAAdGV4dAAAAABDQzAAWFlaIAAAAAAAAPNUAAEAAAABFslYWVogAAAAAAAAb6AAADjyAAADj1hZWiAAAAAAAABilgAAt4kAABjaWFlaIAAAAAAAACSgAAAPhQAAtsRjdXJ2AAAAAAAAACoAAAB8APgBnAJ1A4MEyQZOCBIKGAxiDvQRzxT2GGocLiBDJKwpai5+M+s5sz/WRldNNlR2XBdkHWyGdVZ+jYgskjacq6eMstu+mcrH12Xkd/H5////2wBDAAkGBwgHBgkICAgKCgkLDhcPDg0NDhwUFREXIh4jIyEeICAlKjUtJScyKCAgLj8vMjc5PDw8JC1CRkE6RjU7PDn/2wBDAQoKCg4MDhsPDxs5JiAmOTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTn/wAARCAIAAgADASIAAhEBAxEB/8QAHAABAAICAwEAAAAAAAAAAAAAAAYHBQgBAgQD/8QAThAAAQMDAQQFBgoGCAYBBQAAAAECAwQFEQYHEiExQVFhcYETFBUWQpEXIiMyUlWTlKHBVmKx0dLiCDZTc3SCkrIkMzU3wvBDcnWk4fH/xAAaAQEAAwEBAQAAAAAAAAAAAAAAAQIDBAUG/8QAMxEBAAICAQMCBAQEBgMAAAAAAAECAxESBBMxIUEFUVKhFWFx0SIjMrEUFkKBkcEkM+H/2gAMAwEAAhEDEQA/ALwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="h-[40px] w-auto" alt="VECTRA"/>
+      </div>
+      
+      <nav class="p-4 space-y-1">
+        <a href="#" id="nav-dashboard" onclick="switchTab('dashboard'); return false;" class="flex items-center gap-3 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg text-[13px] font-semibold transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+          Dashboard
+        </a>
+        <a href="#" id="nav-projects" onclick="switchTab('projects'); return false;" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg text-[13px] font-medium transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+          My Projects
+        </a>
+        <a href="#" id="nav-assets" onclick="switchTab('assets'); return false;" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg text-[13px] font-medium transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          Assets & Models
+        </a>
+        <a href="#" id="nav-billing" onclick="switchTab('billing'); return false;" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg text-[13px] font-medium transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+          Usage & Billing
+        </a>
+        <a href="#" id="nav-settings" onclick="switchTab('settings'); return false;" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg text-[13px] font-medium transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          Settings
+        </a>
+      
+        <a href="#" onclick="window.parent.document.getElementById('logout').click(); return false;" class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg text-[13px] font-medium transition-colors mt-4">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          Logout
+        </a>
+</nav>
+    </div>
+    
+    <div class="p-4 border-t border-slate-100">
+      <div class="mb-4">
+        <div class="flex justify-between text-[11px] font-semibold text-slate-500 mb-1">
+          <span>Compute Credits</span>
+          <span class="text-blue-600">85% left</span>
+        </div>
+        <div class="w-full bg-slate-100 rounded-full h-1.5">
+          <div class="bg-blue-600 h-1.5 rounded-full" style="width: 85%"></div>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-slate-200 overflow-hidden">
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="User" class="w-full h-full object-cover"/>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-[13px] font-semibold text-slate-900 leading-tight">User</span>
+          <span class="text-[11px] text-slate-500">Enterprise Plan</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+    
+    <!-- Top Header -->
+    <header class="h-[72px] flex items-center justify-between px-8 bg-white border-b border-slate-200 shrink-0">
+      <div class="relative w-96">
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <input type="text" placeholder="Search projects, assets, or models..." class="w-full h-10 pl-10 pr-4 bg-slate-50 border border-slate-200 rounded-full text-[13px] outline-none focus:border-blue-500 focus:bg-white transition-all"/>
+      </div>
+      <div class="flex items-center gap-4">
+        <button class="relative p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+        </button>
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='Studio_Editor.html'; window.parent.render(); window.parent.route(); }" class="h-10 px-6 bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-semibold rounded-full shadow-sm transition-colors flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          New Project
+        </button>
+      </div>
+    </header>
+
+    <!-- Scrollable Content -->
+    <div class="flex-1 overflow-y-auto p-8" id="tab-dashboard">
+      
+      <div class="mb-10">
+        <h1 class="text-[32px] font-bold tracking-tight mb-1 syne">Welcome back</h1>
+        <p class="text-[14px] text-slate-500">You have 12 active projects and 8,500 computation credits remaining.</p>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="mb-10">
+        <h2 class="text-[13px] font-bold uppercase tracking-widest text-slate-400 mb-4">Quick Start</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <button onclick="if(window.parent && window.parent.active){ window.parent.active='Studio_Editor.html'; window.parent.render(); window.parent.route(); }" class="text-left p-6 rounded-3xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 group">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            </div>
+            <h3 class="text-[16px] font-bold text-slate-900 mb-2">Text to Video</h3>
+            <p class="text-[13px] text-slate-500 leading-relaxed">Generate high-fidelity cinematic video from simple text prompts using the VECTRA-3 engine.</p>
+          </button>
+          
+          <button onclick="if(window.parent && window.parent.active){ window.parent.active='Studio_Editor.html'; window.parent.render(); window.parent.route(); }" class="text-left p-6 rounded-3xl bg-white border border-slate-200 hover:border-violet-400 hover:shadow-lg hover:shadow-violet-500/10 transition-all duration-300 group">
+            <div class="w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-6 h-6 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            </div>
+            <h3 class="text-[16px] font-bold text-slate-900 mb-2">Image to Video</h3>
+            <p class="text-[13px] text-slate-500 leading-relaxed">Bring your static assets to life with advanced motion interpolation and depth awareness.</p>
+          </button>
+          
+          <button class="text-left p-6 rounded-3xl bg-white border border-slate-200 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 group">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+            </div>
+            <h3 class="text-[16px] font-bold text-slate-900 mb-2">Train Custom Model</h3>
+            <p class="text-[13px] text-slate-500 leading-relaxed">Fine-tune the engine on your own brand assets, characters, or specific art styles.</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent Projects -->
+      <div>
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-[13px] font-bold uppercase tracking-widest text-slate-400">Recent Projects</h2>
+          <a href="#" class="text-[13px] font-semibold text-blue-600 hover:text-blue-700">View all projects &rarr;</a>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Project Card 1 -->
+          <div class="group rounded-3xl overflow-hidden bg-white border border-slate-200 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
+            <div class="aspect-video bg-slate-100 relative overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
+              <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center text-slate-900 shadow-lg">
+                  <svg class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+              <div class="absolute top-3 right-3 px-2 py-1 bg-black/70 backdrop-blur-md rounded-md text-white text-[10px] font-bold tracking-wider">00:15</div>
+            </div>
+            <div class="p-5">
+              <h3 class="text-[15px] font-bold text-slate-900 mb-1 truncate">Cyberpunk City Pan</h3>
+              <p class="text-[12px] text-slate-500">Edited 2 hours ago</p>
+            </div>
+          </div>
+
+          <!-- Project Card 2 -->
+          <div class="group rounded-3xl overflow-hidden bg-white border border-slate-200 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
+            <div class="aspect-video bg-slate-100 relative overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2564&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
+              <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center text-slate-900 shadow-lg">
+                  <svg class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+              <div class="absolute top-3 right-3 px-2 py-1 bg-black/70 backdrop-blur-md rounded-md text-white text-[10px] font-bold tracking-wider">00:42</div>
+            </div>
+            <div class="p-5">
+              <h3 class="text-[15px] font-bold text-slate-900 mb-1 truncate">Retro Synthwave Loop</h3>
+              <p class="text-[12px] text-slate-500">Edited yesterday</p>
+            </div>
+          </div>
+
+          <!-- Project Card 3 -->
+          <div class="group rounded-3xl overflow-hidden bg-white border border-slate-200 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
+            <div class="aspect-video bg-slate-100 relative overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?q=80&w=2564&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-60"/>
+              <div class="absolute inset-0 bg-black/10 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-emerald-600 shadow-lg relative">
+                  <svg class="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </div>
+              </div>
+              <div class="absolute top-3 right-3 px-2 py-1 bg-emerald-500/90 backdrop-blur-md rounded-md text-white text-[10px] font-bold tracking-wider animate-pulse">RENDERING</div>
+            </div>
+            <div class="p-5">
+              <h3 class="text-[15px] font-bold text-slate-900 mb-1 truncate">Space Nebula Expansion</h3>
+              <p class="text-[12px] text-slate-500">Rendering (45%)</p>
+            </div>
+          </div>
+
+          <!-- Project Card 4 -->
+          <div class="group rounded-3xl overflow-hidden bg-slate-50 border border-slate-200 cursor-pointer border-dashed flex flex-col items-center justify-center hover:bg-slate-100 transition-colors duration-300 h-full min-h-[220px]">
+            <div class="w-12 h-12 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            </div>
+            <h3 class="text-[15px] font-bold text-slate-600">Blank Canvas</h3>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  
+    
+    <div class="flex-1 overflow-y-auto p-8 hidden" id="tab-projects">
+      <div class="flex justify-between items-end mb-8">
+        <div>
+          <h1 class="text-[32px] font-bold tracking-tight mb-1 syne">My Projects</h1>
+          <p class="text-[14px] text-slate-500">View and manage your cinematic generations.</p>
+        </div>
+        <div class="flex gap-2">
+          <select class="h-10 px-4 bg-white border border-slate-200 rounded-full text-[13px] font-medium outline-none hover:bg-slate-50 transition-colors cursor-pointer">
+            <option>All Projects</option>
+            <option>Completed</option>
+            <option>Rendering</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Project 1 -->
+        <div class="group rounded-3xl bg-white border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer">
+          <div class="aspect-video bg-slate-100 relative overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+              <button class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:scale-110 transition-transform"><svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+              <button class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/40 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
+            </div>
+            <div class="absolute top-3 right-3 px-2 py-1 bg-black/70 backdrop-blur-md rounded-md text-white text-[10px] font-bold tracking-wider">00:15</div>
+          </div>
+          <div class="p-5 flex justify-between items-start">
+            <div>
+              <h3 class="text-[15px] font-bold text-slate-900 mb-1">Cyberpunk City Pan</h3>
+              <p class="text-[12px] text-slate-500">VECTRA-3 Cinematic • Sep 14</p>
+            </div>
+            <button class="text-slate-400 hover:text-blue-600 transition-colors p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg></button>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="group rounded-3xl bg-white border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer">
+          <div class="aspect-video bg-slate-100 relative overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2564&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+              <button class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:scale-110 transition-transform"><svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+              <button class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/40 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
+            </div>
+            <div class="absolute top-3 right-3 px-2 py-1 bg-black/70 backdrop-blur-md rounded-md text-white text-[10px] font-bold tracking-wider">00:42</div>
+          </div>
+          <div class="p-5 flex justify-between items-start">
+            <div>
+              <h3 class="text-[15px] font-bold text-slate-900 mb-1">Retro Synthwave Loop</h3>
+              <p class="text-[12px] text-slate-500">VECTRA-HyperReal • Sep 13</p>
+            </div>
+            <button class="text-slate-400 hover:text-blue-600 transition-colors p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="flex-1 overflow-y-auto p-8 hidden" id="tab-assets">
+      <div class="flex justify-between items-end mb-8">
+        <div>
+          <h1 class="text-[32px] font-bold tracking-tight mb-1 syne">Assets & Models</h1>
+          <p class="text-[14px] text-slate-500">Manage your custom LoRAs, reference images, and audio tracks.</p>
+        </div>
+      </div>
+      
+      <!-- Drag & Drop Zone -->
+      <div class="mb-10 w-full border-2 border-dashed border-blue-200 rounded-3xl bg-blue-50/50 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center py-12 cursor-pointer group">
+        <div class="w-14 h-14 bg-white rounded-full shadow-sm border border-blue-100 flex items-center justify-center mb-4 text-blue-500 group-hover:scale-110 transition-transform duration-300">
+           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+        </div>
+        <h3 class="text-[15px] font-bold text-blue-900 mb-1">Click or drag files to upload</h3>
+        <p class="text-[13px] text-blue-600/70">Supports JPG, PNG, MP3, WAV, and .safetensors (max 5GB)</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex gap-8 border-b border-slate-200 mb-8">
+        <button class="pb-3 text-[14px] font-bold text-blue-600 border-b-2 border-blue-600">Reference Images <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-[11px] ml-1">2</span></button>
+        <button class="pb-3 text-[14px] font-medium text-slate-500 hover:text-slate-800 transition-colors">Audio Tracks <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[11px] ml-1">0</span></button>
+        <button class="pb-3 text-[14px] font-medium text-slate-500 hover:text-slate-800 transition-colors">Custom Models <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[11px] ml-1">0</span></button>
+      </div>
+
+      <!-- Asset Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5">
+        <div class="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+           <img src="https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=2532&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
+              <div class="flex justify-end"><button class="w-7 h-7 bg-white/20 hover:bg-red-500 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div>
+              <p class="text-[11px] text-white font-medium truncate">reference_01.jpg</p>
+           </div>
+        </div>
+        <div class="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+           <img src="https://images.unsplash.com/photo-1534361960057-19889db9621e?q=80&w=2670&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
+              <div class="flex justify-end"><button class="w-7 h-7 bg-white/20 hover:bg-red-500 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div>
+              <p class="text-[11px] text-white font-medium truncate">character_face.png</p>
+           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-8 hidden" id="tab-billing">
+      <h1 class="text-[32px] font-bold tracking-tight mb-1 syne">Usage & Billing</h1>
+      <p class="text-[14px] text-slate-500">Monitor your compute credits and manage your subscription.</p>
+      <div class="mt-10 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+         <h3 class="text-[16px] font-bold text-slate-900 mb-4">Current Plan: Enterprise</h3>
+         <div class="mb-6">
+            <div class="flex justify-between text-[13px] font-semibold text-slate-600 mb-2">
+              <span>Compute Credits Used</span>
+              <span>1,500 / 10,000 (15%)</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2.5">
+              <div class="bg-blue-600 h-2.5 rounded-full" style="width: 15%"></div>
+            </div>
+         </div>
+         <button class="h-10 px-6 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-semibold rounded-full shadow-sm transition-colors">Buy More Credits</button>
+      </div>
+    </div>
+    
+    <div class="flex-1 overflow-y-auto p-8 hidden" id="tab-settings">
+      <h1 class="text-[32px] font-bold tracking-tight mb-1 syne">Settings</h1>
+      <p class="text-[14px] text-slate-500">Manage your account preferences and API keys.</p>
+      <div class="mt-10 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm max-w-2xl">
+         <div class="space-y-6">
+            <div class="text-[13px] text-slate-500 text-center py-8">
+              Personal information management has been restricted by the administrator.
+            </div>
+         </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    function switchTab(tabId) {
+      document.getElementById('tab-dashboard').classList.add('hidden');
+      document.getElementById('tab-projects').classList.add('hidden');
+      document.getElementById('tab-assets').classList.add('hidden');
+      document.getElementById('tab-billing').classList.add('hidden');
+      document.getElementById('tab-settings').classList.add('hidden');
+      
+      const navs = ['nav-dashboard', 'nav-projects', 'nav-assets', 'nav-billing', 'nav-settings'];
+      navs.forEach(nav => {
+         const el = document.getElementById(nav);
+         if (el) {
+             el.className = 'flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg text-[13px] font-medium transition-colors';
+         }
+      });
+      
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+      
+      const activeNav = document.getElementById('nav-' + tabId);
+      if (activeNav) {
+          activeNav.className = 'flex items-center gap-3 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg text-[13px] font-semibold transition-colors';
+      }
+    }
+  </script>
+</body>
+
+</html>

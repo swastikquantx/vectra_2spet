@@ -34,8 +34,8 @@ const layout = `<!DOCTYPE html>
 </main>
 
 <script>
-const ORDER=["Home.html", "About_Swastilk.html", "Cinematic-Arsenal-37-Engines.html", "How-It-Works.html", "Solutions.html", "Enterprise.html", "Pricing.html", "Create_Studio.html", "Auth-Genz-Registration.html"];
-const LABELS={"Home.html": "Home", "About_Swastilk.html": "About Swastik", "Cinematic-Arsenal-37-Engines.html": "Cinematic Arsenal", "How-It-Works.html": "How It Works", "Solutions.html": "Solutions", "Enterprise.html": "Enterprise", "Pricing.html": "Pricing", "Create_Studio.html": "Create Studio", "Auth-Genz-Registration.html": "Login/Create Account", "User_Dashboard.html": "User Dashboard", "Admin_Panel.html": "Admin Dashboard"};
+const ORDER=["Home.html", "About_Swastilk.html", "Cinematic-Arsenal-37-Engines.html", "How-It-Works.html", "Solutions.html", "Enterprise.html", "Pricing.html", "Create_Studio.html", "Auth-Genz-Registration.html","Concierge_Studio.html"];
+const LABELS={"Home.html": "Home", "About_Swastilk.html": "About Swastik", "Cinematic-Arsenal-37-Engines.html": "Cinematic Arsenal", "How-It-Works.html": "How It Works", "Solutions.html": "Solutions", "Enterprise.html": "Enterprise", "Pricing.html": "Pricing", "Create_Studio.html": "Create Studio", "Auth-Genz-Registration.html": "Login/Create Account", "User_Dashboard.html": "User Dashboard", "Admin_Panel.html": "Admin Dashboard", "Concierge_Studio.html": "Concierge Studio"};
 `;
 
 const htmlFiles = [
@@ -51,7 +51,7 @@ const htmlFiles = [
   'User_Dashboard.html',
   'Studio_Editor.html',
   'Admin_Panel.html'
-];
+, "Concierge_Studio.html"];
 
 
 

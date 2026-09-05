@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Advanced Voice Lab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #d946ef; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='User_Dashboard.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Advanced Voice Lab</span>
+        </div>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="space-y-1">
+      <button onclick="setMode('clone')" id="mode-btn-clone" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Voice Cloning
+      </button>
+      <button onclick="setMode('changer')" id="mode-btn-changer" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Voice Changer
+      </button>
+      <button onclick="setMode('isolate')" id="mode-btn-isolate" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Voice Isolation
+      </button>
+      <button onclick="setMode('enhance')" id="mode-btn-enhance" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Speech Enhancement
+      </button>
+    </div>
+    
+    <div class="mt-auto pt-4 border-t border-zinc-800">
+        <div class="text-xs text-zinc-500 mb-2">My Voice Profiles</div>
+        <div class="space-y-2">
+            <div class="flex items-center justify-between p-2 rounded bg-zinc-900 border border-zinc-800">
+                <span class="text-xs text-zinc-300">My Custom Voice</span>
+                <span class="text-[10px] bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded">Approved</span>
+            </div>
+        </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    <!-- VOICE CLONING PANEL -->
+    <div id="panel-clone" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-3xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Voice Cloning & Consent</h2>
+            <p class="text-sm text-zinc-400">Upload a clean voice sample. You MUST have explicit authorization to clone this voice.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6 space-y-6">
+              <div>
+                  <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-2">Voice Sample Input</label>
+                  <div class="border-2 border-dashed border-zinc-700 rounded-xl p-8 flex flex-col items-center justify-center text-center hover:border-fuchsia-500/50 transition-colors cursor-pointer bg-zinc-900/50">
+                      <svg class="w-8 h-8 text-zinc-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                      <p class="text-sm font-medium text-zinc-300">Upload or Record Audio</p>
+                      <p class="text-xs text-zinc-500 mt-1">.wav, .mp3, .m4a (Max 15MB)</p>
+                      <button onclick="document.getElementById('sample-quality').classList.remove('hidden')" class="mt-4 text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded transition">Simulate Upload</button>
+                  </div>
+              </div>
+              
+              <div id="sample-quality" class="hidden bg-zinc-900 border border-zinc-700 rounded p-4">
+                  <div class="flex items-center justify-between mb-2">
+                      <span class="text-sm text-white font-medium">sample_voice_01.wav</span>
+                      <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">GOOD QUALITY</span>
+                  </div>
+                  <p class="text-xs text-zinc-400">Duration: 00:45 • No background noise detected.</p>
+              </div>
+              
+              <div class="space-y-4 pt-4 border-t border-zinc-800">
+                  <div class="flex gap-3 items-start">
+                      <input type="checkbox" id="consent-check" class="mt-1 bg-zinc-900 border-zinc-700 rounded text-fuchsia-600 focus:ring-fuchsia-500 focus:ring-offset-zinc-900">
+                      <label for="consent-check" class="text-sm text-zinc-300">
+                          <strong>Required:</strong> I confirm that I have explicit authorization to clone and use this voice. I understand that creating synthetic voices without consent is prohibited.
+                      </label>
+                  </div>
+                  
+                  <button onclick="cloneVoice()" id="btn-clone" class="w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-white py-3 rounded-lg font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                      Clone Voice Profile
+                  </button>
+                  <p id="clone-error" class="text-xs text-rose-500 hidden"></p>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- VOICE CHANGER PANEL -->
+    <div id="panel-changer" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-3xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Voice Changer</h2>
+            <p class="text-sm text-zinc-400">Transform a source audio file into a different voice or style.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6 space-y-6">
+             <p class="text-sm text-zinc-500 text-center">Engine Not Configured</p>
+          </div>
+       </div>
+    </div>
+    
+    <!-- VOICE ISOLATION PANEL -->
+    <div id="panel-isolate" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-3xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Voice Isolation</h2>
+            <p class="text-sm text-zinc-400">Separate speech from background noise and music.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6 space-y-6">
+             <button onclick="isolateVoice()" id="btn-isolate" class="w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-white py-3 rounded-lg font-bold transition-all">
+                Isolate Speech (Mock)
+             </button>
+             <div id="isolate-result" class="hidden p-4 bg-zinc-900 rounded border border-zinc-800 text-sm text-zinc-300">
+                 Original audio preserved. Created new ISOLATED_VOICE asset.
+             </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- SPEECH ENHANCEMENT PANEL -->
+    <div id="panel-enhance" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-3xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Speech Enhancement</h2>
+            <p class="text-sm text-zinc-400">Clean up noise, hum, and reverb from vocal recordings.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6 space-y-6">
+              <div>
+                 <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Enhancement Intensity</label>
+                 <select class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none">
+                     <option>Light (Preserve Ambience)</option>
+                     <option>Balanced (Default)</option>
+                     <option>Strong (Studio Isolate)</option>
+                 </select>
+             </div>
+             <button onclick="enhanceSpeech()" id="btn-enhance" class="w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-white py-3 rounded-lg font-bold transition-all">
+                Enhance Audio (Mock)
+             </button>
+             <div id="enhance-result" class="hidden p-4 bg-zinc-900 rounded border border-zinc-800 text-sm text-zinc-300">
+                 Original audio preserved. Created new ENHANCED_VOICE asset.
+             </div>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['clone', 'changer', 'isolate', 'enhance'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    document.getElementById('mode-btn-' + mode).classList.add('bg-zinc-800/50', 'text-white');
+    document.getElementById('mode-btn-' + mode).classList.remove('text-zinc-400');
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  async function cloneVoice() {
+      const consent = document.getElementById('consent-check').checked;
+      const errorMsg = document.getElementById('clone-error');
+      
+      if (!consent) {
+          errorMsg.innerText = "CONSENT_REQUIRED: You must authorize cloning before proceeding.";
+          errorMsg.classList.remove('hidden');
+          return;
+      }
+      
+      errorMsg.classList.add('hidden');
+      const btn = document.getElementById('btn-clone');
+      btn.innerHTML = `<div class="spinner border-t-white border-l-white inline-block align-middle mr-2"></div> Cloning...`;
+      
+      try {
+          const res = await fetch('/api/audio/voice-clone', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({
+                  consentConfirmed: true,
+                  audioAssetIds: ['sample_voice_01.wav']
+              })
+          });
+          const data = await res.json();
+          
+          if(data.success) {
+              btn.innerHTML = "Voice Cloned Successfully!";
+              btn.classList.replace('bg-fuchsia-600', 'bg-emerald-600');
+          } else {
+              errorMsg.innerText = data.error?.message || "Failed to clone voice.";
+              errorMsg.classList.remove('hidden');
+              btn.innerHTML = "Clone Voice Profile";
+          }
+      } catch (e) {
+          errorMsg.innerText = "Network Error.";
+          errorMsg.classList.remove('hidden');
+          btn.innerHTML = "Clone Voice Profile";
+      }
+  }
+
+  function isolateVoice() {
+      document.getElementById('isolate-result').classList.remove('hidden');
+  }
+
+  function enhanceSpeech() {
+      document.getElementById('enhance-result').classList.remove('hidden');
+  }
+</script>
+</body>
+</html>

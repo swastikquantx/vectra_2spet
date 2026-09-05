@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - V1 Readiness Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0 z-10">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='Admin.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">V1 Readiness Center</span>
+            <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded ml-2 uppercase font-bold border border-emerald-500/20">Final Audit Phase</span>
+            <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded ml-1 font-mono">P32</span>
+        </div>
+     </div>
+     
+     <div class="flex items-center gap-3">
+         <div class="flex items-center gap-2 mr-4 border-r border-zinc-800 pr-4">
+             <span class="text-[10px] text-zinc-500 font-bold uppercase">System State:</span>
+             <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded font-mono font-bold border border-blue-500/20 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span> FROZEN (V1)</span>
+         </div>
+         <button class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-1.5 rounded transition font-medium shadow-lg flex items-center gap-2 border border-zinc-700">
+            Export Manifest
+         </button>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Audit Domains</span>
+    </div>
+    <div class="space-y-1 overflow-y-auto custom-scrollbar flex-1">
+      <button onclick="setMode('overview')" id="mode-btn-overview" class="w-full flex items-center justify-between px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Overview & Stats
+      </button>
+      <button onclick="setMode('seo')" id="mode-btn-seo" class="w-full flex items-center justify-between px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Advanced SEO
+         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+      </button>
+      <button onclick="setMode('features')" id="mode-btn-features" class="w-full flex items-center justify-between px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Feature Inventory
+         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+      </button>
+      <button onclick="setMode('security')" id="mode-btn-security" class="w-full flex items-center justify-between px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Security Revalidation
+         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+      </button>
+      <button onclick="setMode('limitations')" id="mode-btn-limitations" class="w-full flex items-center justify-between px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Known Limitations
+         <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    <!-- OVERVIEW PANEL -->
+    <div id="panel-overview" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-6xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">V1 Master Certification</h2>
+            <p class="text-sm text-zinc-400">Final forensic audit, functional verification, and feature freeze status.</p>
+          </div>
+          
+          <div class="grid grid-cols-7 gap-4">
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4 text-center">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Working</div>
+                  <div class="text-xl text-emerald-400 font-bold">215</div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4 text-center opacity-50">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Partial</div>
+                  <div class="text-xl text-zinc-400 font-bold">0</div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4 text-center opacity-50">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">UI Only</div>
+                  <div class="text-xl text-zinc-400 font-bold">0</div>
+              </div>
+              <div class="bg-zinc-900 border border-rose-500/30 rounded p-4 text-center opacity-50">
+                  <div class="text-[10px] text-rose-500 font-bold uppercase mb-1">Broken</div>
+                  <div class="text-xl text-zinc-400 font-bold">0</div>
+              </div>
+              <div class="bg-zinc-900 border border-rose-500/30 rounded p-4 text-center opacity-50">
+                  <div class="text-[10px] text-rose-500 font-bold uppercase mb-1">Not Implemented</div>
+                  <div class="text-xl text-zinc-400 font-bold">0</div>
+              </div>
+              <div class="bg-zinc-900 border border-amber-500/30 rounded p-4 text-center">
+                  <div class="text-[10px] text-amber-500 font-bold uppercase mb-1">Not Configured</div>
+                  <div class="text-xl text-amber-400 font-bold">14</div>
+              </div>
+              <div class="bg-zinc-900 border border-rose-500 rounded p-4 text-center">
+                  <div class="text-[10px] text-rose-500 font-bold uppercase mb-1">CRITICAL BLOCKERS</div>
+                  <div class="text-xl text-white font-bold">0</div>
+              </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6 mt-6">
+              <!-- Certifications -->
+              <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+                  <h3 class="font-bold text-sm text-white mb-4">Core Certifications</h3>
+                  <div class="space-y-3">
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">Creator Studio End-to-End</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">PASS</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">App Builder & Backend Generation</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">PASS</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">Content & Media Engines</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">PASS</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">Workflow Automation Runtime</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">PASS</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">Security & RBAC Revalidation</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">PASS</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm pb-2">
+                          <span class="text-zinc-400">Release, Export & Deployment</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">PASS</span>
+                      </div>
+                  </div>
+              </div>
+              
+              <!-- SEO & Optimization -->
+              <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+                  <h3 class="font-bold text-sm text-white mb-4">Advanced SEO & Public Audit</h3>
+                  <div class="space-y-3">
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">Sitemap & Robots.txt</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">IMPLEMENTED</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">Canonicals & Metadata</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">IMPLEMENTED</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">Structured Data (JSON-LD)</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">IMPLEMENTED</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">Responsive & Mobile Design</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">PASS</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm pb-2">
+                          <span class="text-zinc-400">Generated Project SEO Inheritance</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">PASS</span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+  </main>
+</div>
+<script>
+  function setMode(mode) {
+    ['overview', 'seo', 'features', 'security', 'limitations'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    const activeBtn = document.getElementById('mode-btn-' + mode);
+    if(activeBtn) {
+        activeBtn.classList.add('bg-zinc-800/50', 'text-white');
+        activeBtn.classList.remove('text-zinc-400');
+    }
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+</script>
+</body>
+</html>

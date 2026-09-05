@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Advanced Dubbing</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #3b82f6; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='User_Dashboard.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Advanced Dubbing Studio</span>
+        </div>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <!-- Sidebar Navigation -->
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Dubbing Stages</span>
+    </div>
+    <div class="space-y-1">
+      <button onclick="setMode('source')" id="mode-btn-source" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Source & Setup
+      </button>
+      <button onclick="setMode('speakers')" id="mode-btn-speakers" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Speaker Analysis
+      </button>
+      <button onclick="setMode('mapping')" id="mode-btn-mapping" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Voice Mapping
+      </button>
+      <button onclick="setMode('lipsync')" id="mode-btn-lipsync" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Lip Sync & Final
+      </button>
+    </div>
+    
+    <div class="mt-auto p-4 border-t border-zinc-800/50">
+      <div class="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-2">Project Settings</div>
+      <div class="flex items-center justify-between text-xs text-zinc-300">
+          <span>Target Language:</span>
+          <span class="bg-zinc-800 px-2 py-1 rounded">Hindi</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    <!-- SOURCE PANEL -->
+    <div id="panel-source" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Source Setup</h2>
+            <p class="text-sm text-zinc-400">Select the master video and target languages.</p>
+          </div>
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6 space-y-6">
+              <div>
+                  <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Target Language</label>
+                  <select class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none">
+                      <option>Hindi</option>
+                      <option>Spanish</option>
+                      <option>French</option>
+                  </select>
+              </div>
+              <button onclick="nextStep('speakers')" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-medium">Continue</button>
+          </div>
+       </div>
+    </div>
+    
+    <!-- SPEAKERS PANEL -->
+    <div id="panel-speakers" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Speaker Analysis (Diarization)</h2>
+              <p class="text-sm text-zinc-400">Identify speakers and their dialogue segments.</p>
+            </div>
+            <button onclick="analyzeSpeakers()" id="btn-analyze" class="bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded text-sm flex items-center gap-2">Run Analysis</button>
+          </div>
+          
+          <div id="speakers-result" class="hidden space-y-4">
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="flex items-center justify-between mb-2">
+                      <input type="text" value="Speaker 1 (Host)" class="bg-transparent text-white font-semibold outline-none border-b border-dashed border-zinc-600 focus:border-blue-500">
+                      <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">2 Segments</span>
+                  </div>
+                  <p class="text-sm text-zinc-400">"Welcome to Vectra AI."</p>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="flex items-center justify-between mb-2">
+                      <input type="text" value="Speaker 2 (Guest)" class="bg-transparent text-white font-semibold outline-none border-b border-dashed border-zinc-600 focus:border-blue-500">
+                      <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">1 Segment</span>
+                  </div>
+                  <p class="text-sm text-zinc-400">"It's great to be here."</p>
+              </div>
+              <button onclick="nextStep('mapping')" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-medium w-full mt-4">Confirm Speakers</button>
+          </div>
+       </div>
+    </div>
+    
+    <!-- MAPPING PANEL -->
+    <div id="panel-mapping" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Voice Mapping & Translation</h2>
+            <p class="text-sm text-zinc-400">Assign voices to speakers and generate target audio. (Duration alignment will be applied automatically.)</p>
+          </div>
+          
+          <div class="space-y-4">
+              <div class="bg-[#121214] border border-zinc-800 rounded p-5">
+                  <div class="mb-3 flex justify-between">
+                      <h3 class="text-white font-semibold">Speaker 1 (Host)</h3>
+                      <span class="text-xs text-zinc-500">Translated text aligned</span>
+                  </div>
+                  <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Target Voice (Hindi)</label>
+                  <select class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none mb-4">
+                      <option>Aarav (Hindi, Male, Professional)</option>
+                      <option>Custom Profile: Founder Voice (Authorized)</option>
+                  </select>
+              </div>
+              <div class="bg-[#121214] border border-zinc-800 rounded p-5">
+                  <div class="mb-3 flex justify-between">
+                      <h3 class="text-white font-semibold">Speaker 2 (Guest)</h3>
+                      <span class="text-xs text-zinc-500">Translated text aligned</span>
+                  </div>
+                  <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Target Voice (Hindi)</label>
+                  <select class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none">
+                      <option>Diya (Hindi, Female, Conversational)</option>
+                  </select>
+              </div>
+              
+              <button onclick="generateDubbing()" id="btn-dubbing" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded font-medium w-full shadow-lg shadow-blue-500/20">Generate Dubbed Audio</button>
+          </div>
+       </div>
+    </div>
+    
+    <!-- LIP SYNC PANEL -->
+    <div id="panel-lipsync" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Sync Refinement & Lip Sync</h2>
+            <p class="text-sm text-zinc-400">Apply visual lip sync to match the newly dubbed audio track.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6">
+             <div class="flex items-center justify-between mb-6">
+                 <div>
+                     <h3 class="text-white font-semibold">Video Lip Sync</h3>
+                     <p class="text-xs text-zinc-500 mt-1">Requires face tracking on source video.</p>
+                 </div>
+                 <label class="relative inline-flex items-center cursor-pointer">
+                   <input type="checkbox" id="lip-sync-toggle" class="sr-only peer">
+                   <div class="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                 </label>
+             </div>
+             
+             <button onclick="finalRender()" id="btn-final-render" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-lg font-bold transition-all shadow-lg shadow-emerald-500/20">
+                 Render Localized Video
+             </button>
+             <p id="render-result" class="hidden text-sm text-zinc-300 mt-4 text-center">Video localized! Original project preserved.</p>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['source', 'speakers', 'mapping', 'lipsync'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    document.getElementById('mode-btn-' + mode).classList.add('bg-zinc-800/50', 'text-white');
+    document.getElementById('mode-btn-' + mode).classList.remove('text-zinc-400');
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  function nextStep(step) {
+      setMode(step);
+  }
+
+  async function analyzeSpeakers() {
+      const btn = document.getElementById('btn-analyze');
+      btn.innerHTML = `<div class="spinner border-t-white border-l-white"></div> Analyzing...`;
+      
+      try {
+          const res = await fetch('/api/dubbing/analyze', { method: 'POST' });
+          const data = await res.json();
+          document.getElementById('speakers-result').classList.remove('hidden');
+          btn.innerHTML = 'Complete';
+      } catch (e) {
+          alert('Analysis failed.');
+          btn.innerHTML = 'Run Analysis';
+      }
+  }
+
+  async function generateDubbing() {
+      const btn = document.getElementById('btn-dubbing');
+      btn.innerHTML = `<div class="spinner border-t-white border-l-white"></div> Generating Audio...`;
+      
+      try {
+          const res = await fetch('/api/dubbing/generate', { method: 'POST' });
+          const data = await res.json();
+          btn.innerHTML = 'Dubbed Audio Generated';
+          btn.classList.replace('bg-blue-600', 'bg-emerald-600');
+          setTimeout(() => nextStep('lipsync'), 1000);
+      } catch(e) {
+          alert('Generation failed');
+          btn.innerHTML = 'Generate Dubbed Audio';
+      }
+  }
+
+  async function finalRender() {
+      const btn = document.getElementById('btn-final-render');
+      const lipSync = document.getElementById('lip-sync-toggle').checked;
+      btn.innerHTML = `<div class="spinner border-t-white border-l-white"></div> Rendering...`;
+      
+      try {
+          const res = await fetch('/api/dubbing/lipsync', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({ enableLipSync: lipSync })
+          });
+          document.getElementById('render-result').classList.remove('hidden');
+          btn.innerHTML = 'Render Complete';
+      } catch(e) {
+          alert('Render failed');
+          btn.innerHTML = 'Render Localized Video';
+      }
+  }
+</script>
+</body>
+</html>

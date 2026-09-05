@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Security Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0 z-10">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='Admin.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Security Center</span>
+            <span class="text-[10px] bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded ml-2 uppercase font-bold border border-rose-500/20">Production Hardened</span>
+            <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded ml-1 font-mono">v1</span>
+        </div>
+     </div>
+     
+     <div class="flex items-center gap-3">
+         <div class="flex items-center gap-2 mr-4 border-r border-zinc-800 pr-4">
+             <span class="text-[10px] text-zinc-500 font-bold uppercase">Gate Status:</span>
+             <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-mono font-bold border border-emerald-500/20 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> PASS</span>
+         </div>
+         <button class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded transition font-medium flex items-center gap-2">
+             <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+             Audit Logs
+         </button>
+         <button class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 rounded transition font-medium shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Security Report
+         </button>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Security Domains</span>
+    </div>
+    <div class="space-y-1 overflow-y-auto custom-scrollbar flex-1">
+      <button onclick="setMode('overview')" id="mode-btn-overview" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Overview & Status
+      </button>
+      <button onclick="setMode('users')" id="mode-btn-users" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Users & Roles (RBAC)
+      </button>
+      <button onclick="setMode('sessions')" id="mode-btn-sessions" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Sessions & Auth
+      </button>
+      <button onclick="setMode('secrets')" id="mode-btn-secrets" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Secret Management
+      </button>
+      <button onclick="setMode('api')" id="mode-btn-api" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         API & MCP Identities
+      </button>
+      <button onclick="setMode('backups')" id="mode-btn-backups" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Backups & Recovery
+      </button>
+      <button onclick="setMode('data')" id="mode-btn-data" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Data & Privacy
+      </button>
+      <button onclick="setMode('alerts')" id="mode-btn-alerts" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Security Alerts
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    
+    <!-- OVERVIEW PANEL -->
+    <div id="panel-overview" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-6xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Security Overview</h2>
+            <p class="text-sm text-zinc-400">Production security posture, compliance checks, and access controls.</p>
+          </div>
+          
+          <div class="grid grid-cols-4 gap-4">
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Admin/Admin Login</div>
+                  <div class="text-sm text-rose-400 font-mono font-bold flex items-center gap-2">DISABLED</div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Auth Strategy</div>
+                  <div class="text-sm text-emerald-400 font-mono font-bold">SECURE_SESSIONS</div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Project Isolation</div>
+                  <div class="text-sm text-emerald-400 font-mono font-bold">ENFORCED</div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Active Alerts</div>
+                  <div class="text-sm text-zinc-300 font-mono font-bold">0</div>
+              </div>
+          </div>
+
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5 mt-6">
+              <h3 class="font-bold text-sm text-white mb-4">Production Security Gate (P31)</h3>
+              <div class="space-y-3">
+                  <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                      <span class="text-zinc-400">Default Credentials Scanned</span>
+                      <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">PASS</span>
+                  </div>
+                  <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                      <span class="text-zinc-400">Secrets Redacted from Export/Logs</span>
+                      <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">PASS</span>
+                  </div>
+                  <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                      <span class="text-zinc-400">Rate Limiting & Abuse Prevention</span>
+                      <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">ACTIVE</span>
+                  </div>
+                  <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                      <span class="text-zinc-400">Raw SQL & Arbitrary Shell Check</span>
+                      <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">BLOCKED</span>
+                  </div>
+                  <div class="flex justify-between items-center text-sm pb-2">
+                      <span class="text-zinc-400">Disaster Recovery Backups</span>
+                      <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">VERIFIED</span>
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- BACKUPS PANEL -->
+    <div id="panel-backups" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-5xl mx-auto w-full space-y-6">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Backups & Disaster Recovery</h2>
+              <p class="text-sm text-zinc-400">Manage automated snapshots, integrity verification, and safe restores.</p>
+            </div>
+            <button class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-1.5 rounded transition font-medium border border-zinc-700">Create Manual Backup</button>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl overflow-hidden">
+              <table class="w-full text-left text-sm text-zinc-300">
+                  <thead class="bg-zinc-900 text-xs uppercase font-medium text-zinc-500 border-b border-zinc-800">
+                      <tr>
+                          <th class="p-4">Backup ID</th>
+                          <th class="p-4">Type</th>
+                          <th class="p-4">Timestamp</th>
+                          <th class="p-4">Integrity</th>
+                          <th class="p-4 text-right">Action</th>
+                      </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800">
+                      <tr class="hover:bg-zinc-900/50 transition">
+                          <td class="p-4 font-mono text-xs text-white">bkp_sys_9921</td>
+                          <td class="p-4 text-xs">SCHEDULED</td>
+                          <td class="p-4 text-xs text-zinc-400">2026-09-05 00:00 UTC</td>
+                          <td class="p-4"><span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20 font-bold">VERIFIED</span></td>
+                          <td class="p-4 text-right">
+                              <button class="text-xs bg-zinc-800 hover:bg-rose-900/50 text-rose-400 hover:text-rose-300 px-3 py-1.5 rounded transition">Restore Preview</button>
+                          </td>
+                      </tr>
+                      <tr class="hover:bg-zinc-900/50 transition">
+                          <td class="p-4 font-mono text-xs text-white">bkp_man_8834</td>
+                          <td class="p-4 text-xs">MANUAL</td>
+                          <td class="p-4 text-xs text-zinc-400">2026-09-04 14:22 UTC</td>
+                          <td class="p-4"><span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20 font-bold">VERIFIED</span></td>
+                          <td class="p-4 text-right">
+                              <button class="text-xs bg-zinc-800 hover:bg-rose-900/50 text-rose-400 hover:text-rose-300 px-3 py-1.5 rounded transition">Restore Preview</button>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['overview', 'users', 'sessions', 'secrets', 'api', 'backups', 'data', 'alerts'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    const activeBtn = document.getElementById('mode-btn-' + mode);
+    if(activeBtn) {
+        activeBtn.classList.add('bg-zinc-800/50', 'text-white');
+        activeBtn.classList.remove('text-zinc-400');
+    }
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Factory Operations Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #3b82f6; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0 z-10">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='Admin.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Factory Operations Center</span>
+            <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded ml-2 uppercase font-bold border border-blue-500/20">Admin Control</span>
+            <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded ml-1 font-mono">v1</span>
+        </div>
+     </div>
+     
+     <div class="flex items-center gap-2">
+         <div class="flex items-center gap-2 mr-4 border-r border-zinc-800 pr-4">
+             <span class="text-[10px] text-zinc-500 font-bold uppercase">Factory Status:</span>
+             <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-mono font-bold border border-emerald-500/20 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> NORMAL</span>
+         </div>
+         <button class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded transition font-medium flex items-center gap-2">
+             <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+             Audit
+         </button>
+         <button onclick="showMaintenanceModal()" class="text-xs bg-rose-600 hover:bg-rose-500 text-white px-4 py-1.5 rounded transition font-medium shadow-lg shadow-rose-500/20 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            Global Control
+         </button>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Command Center</span>
+    </div>
+    <div class="space-y-1 overflow-y-auto custom-scrollbar flex-1">
+      <button onclick="setMode('overview')" id="mode-btn-overview" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Overview & Health
+      </button>
+      <button onclick="setMode('projects')" id="mode-btn-projects" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Project Operations
+      </button>
+      <button onclick="setMode('kanban')" id="mode-btn-kanban" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Factory Kanban
+      </button>
+      <button onclick="setMode('queues')" id="mode-btn-queues" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Queues & Workloads
+      </button>
+      <button onclick="setMode('schedules')" id="mode-btn-schedules" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Schedules & Triggers
+      </button>
+      
+      <div class="my-4 border-t border-zinc-800 pt-4">
+          <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider block mb-2 px-3">Aggregated State</span>
+      </div>
+      
+      <button onclick="setMode('approvals')" id="mode-btn-approvals" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white flex justify-between">
+         Approval Inbox
+         <span class="bg-amber-500/20 text-amber-500 text-[10px] px-1.5 py-0.5 rounded font-bold">2</span>
+      </button>
+      <button onclick="setMode('resources')" id="mode-btn-resources" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Resources & Providers
+      </button>
+      <button onclick="setMode('cost')" id="mode-btn-cost" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Cost & Usage
+      </button>
+      <button onclick="setMode('alerts')" id="mode-btn-alerts" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white flex justify-between">
+         Factory Alerts
+         <span class="bg-rose-500/20 text-rose-500 text-[10px] px-1.5 py-0.5 rounded font-bold">1</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    
+    <!-- OVERVIEW PANEL -->
+    <div id="panel-overview" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-6xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Factory Overview</h2>
+            <p class="text-sm text-zinc-400">Aggregated operational state across all Vectra systems.</p>
+          </div>
+          
+          <!-- Key Metrics -->
+          <div class="grid grid-cols-5 gap-4">
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Active Projects</div>
+                  <div class="text-2xl text-white font-bold">12</div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Running Jobs</div>
+                  <div class="text-2xl text-blue-400 font-bold">4</div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Queued Jobs</div>
+                  <div class="text-2xl text-zinc-300 font-bold">18</div>
+              </div>
+              <div class="bg-zinc-900 border border-amber-500/30 rounded p-4 relative overflow-hidden">
+                  <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+                  <div class="text-[10px] text-amber-500 font-bold uppercase mb-1">Pending Approvals</div>
+                  <div class="text-2xl text-white font-bold">2</div>
+              </div>
+              <div class="bg-zinc-900 border border-rose-500/30 rounded p-4 relative overflow-hidden">
+                  <div class="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
+                  <div class="text-[10px] text-rose-500 font-bold uppercase mb-1">Critical Alerts</div>
+                  <div class="text-2xl text-white font-bold">1</div>
+              </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6">
+              <!-- System Health -->
+              <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+                  <h3 class="font-bold text-sm text-white mb-4">System Health</h3>
+                  <div class="space-y-3">
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">Service Gateway (P26)</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">HEALTHY</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">Providers & APIs (P19)</span>
+                          <span class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20 font-bold">DEGRADED (1)</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm border-b border-zinc-800/50 pb-2">
+                          <span class="text-zinc-400">Local Engines (P19)</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">ONLINE</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm pb-2">
+                          <span class="text-zinc-400">Deployment Adapters (P25)</span>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">READY</span>
+                      </div>
+                  </div>
+              </div>
+              
+              <!-- Cost Summary -->
+              <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+                  <h3 class="font-bold text-sm text-white mb-4">Usage & Cost Routing</h3>
+                  <div class="space-y-3">
+                      <div class="flex justify-between items-center text-sm">
+                          <span class="text-zinc-400 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Local / Free</span>
+                          <span class="font-mono text-white">85%</span>
+                      </div>
+                      <div class="w-full bg-zinc-900 rounded-full h-1.5"><div class="bg-emerald-500 h-1.5 rounded-full" style="width: 85%"></div></div>
+                      
+                      <div class="flex justify-between items-center text-sm mt-3">
+                          <span class="text-zinc-400 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span> BYOK</span>
+                          <span class="font-mono text-white">12%</span>
+                      </div>
+                      <div class="w-full bg-zinc-900 rounded-full h-1.5"><div class="bg-blue-500 h-1.5 rounded-full" style="width: 12%"></div></div>
+                      
+                      <div class="flex justify-between items-center text-sm mt-3">
+                          <span class="text-zinc-400 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Paid Fallback</span>
+                          <span class="font-mono text-white">3%</span>
+                      </div>
+                      <div class="w-full bg-zinc-900 rounded-full h-1.5"><div class="bg-rose-500 h-1.5 rounded-full" style="width: 3%"></div></div>
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- APPROVALS PANEL -->
+    <div id="panel-approvals" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-5xl mx-auto w-full space-y-6">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Approval Inbox</h2>
+              <p class="text-sm text-zinc-400">Aggregated pending actions requiring Founder/Admin authorization.</p>
+            </div>
+          </div>
+          
+          <div class="space-y-4">
+              <!-- Approval Card -->
+              <div class="bg-[#121214] border border-amber-500/30 rounded-xl p-5 relative overflow-hidden">
+                  <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+                  <div class="flex justify-between items-start mb-4">
+                      <div>
+                          <div class="flex items-center gap-2 mb-1">
+                              <span class="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded border border-amber-500/20 font-bold uppercase">DEPLOYMENT</span>
+                              <span class="text-xs text-zinc-500">Project: BGV Portal</span>
+                          </div>
+                          <h3 class="font-bold text-white">Production Deployment Requested</h3>
+                      </div>
+                      <div class="text-right">
+                          <div class="text-[10px] text-zinc-500 font-mono">ID: apprv_9x823</div>
+                          <div class="text-xs text-zinc-400 mt-1">Caller: spectre-orchestrator</div>
+                      </div>
+                  </div>
+                  
+                  <div class="bg-black border border-zinc-800 rounded p-4 text-sm text-zinc-300 mb-4">
+                      Requested deployment to Vercel production adapter. Includes 2 safe database migrations. No data loss detected.
+                  </div>
+                  
+                  <div class="flex justify-end gap-3">
+                      <button class="px-4 py-1.5 text-sm font-medium text-zinc-400 hover:text-white transition bg-zinc-800 rounded">Reject</button>
+                      <button onclick="approveAction()" class="px-5 py-1.5 text-sm font-bold bg-amber-600 hover:bg-amber-500 text-white rounded transition shadow-lg shadow-amber-500/20">Review & Approve</button>
+                  </div>
+              </div>
+              
+              <!-- Approval Card -->
+              <div class="bg-[#121214] border border-amber-500/30 rounded-xl p-5 relative overflow-hidden">
+                  <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+                  <div class="flex justify-between items-start mb-4">
+                      <div>
+                          <div class="flex items-center gap-2 mb-1">
+                              <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded border border-blue-500/20 font-bold uppercase">DISTRIBUTION</span>
+                              <span class="text-xs text-zinc-500">Project: SaaS Landing</span>
+                          </div>
+                          <h3 class="font-bold text-white">Social Media Publish Queue</h3>
+                      </div>
+                      <div class="text-right">
+                          <div class="text-[10px] text-zinc-500 font-mono">ID: apprv_1y442</div>
+                          <div class="text-xs text-zinc-400 mt-1">Caller: content-factory</div>
+                      </div>
+                  </div>
+                  
+                  <div class="flex justify-end gap-3 mt-4">
+                      <button class="px-4 py-1.5 text-sm font-medium text-zinc-400 hover:text-white transition bg-zinc-800 rounded">Reject</button>
+                      <button class="px-5 py-1.5 text-sm font-bold bg-amber-600 hover:bg-amber-500 text-white rounded transition shadow-lg shadow-amber-500/20">Review & Approve</button>
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<!-- Maintenance Modal -->
+<div id="maintenance-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-[#18181b] border border-rose-500/30 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col">
+        <div class="absolute top-0 left-0 w-full h-1 bg-rose-500"></div>
+        <div class="p-5 border-b border-zinc-800">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                Global Factory Control
+            </h3>
+            <p class="text-xs text-zinc-400 mt-1">Consequential operations for Admin use only.</p>
+        </div>
+        <div class="p-6 space-y-4">
+            
+            <div class="p-4 border border-zinc-800 bg-[#121214] rounded-lg cursor-pointer hover:border-amber-500/50 transition">
+                <div class="flex justify-between items-center mb-1">
+                    <strong class="text-white text-sm">Pause Non-Critical Queues</strong>
+                    <input type="checkbox" class="rounded border-zinc-700 bg-zinc-900">
+                </div>
+                <p class="text-xs text-zinc-500">Stops accepting new work. Active jobs drain normally. Irreversible work is unaffected.</p>
+            </div>
+            
+            <div class="p-4 border border-rose-500/20 bg-rose-500/5 rounded-lg cursor-pointer hover:border-rose-500/50 transition mt-2">
+                <div class="flex justify-between items-center mb-1">
+                    <strong class="text-rose-400 text-sm">Maintenance Mode</strong>
+                    <input type="checkbox" class="rounded border-zinc-700 bg-zinc-900">
+                </div>
+                <p class="text-xs text-zinc-500">Blocks API callers. Preserves UI for Admin inspection. Safely drains queues.</p>
+            </div>
+            
+        </div>
+        <div class="p-5 border-t border-zinc-800 bg-[#121214] flex justify-end gap-3">
+            <button onclick="hideMaintenanceModal()" class="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white transition">Cancel</button>
+            <button onclick="applyMaintenance()" class="px-5 py-2 text-sm font-bold bg-rose-600 hover:bg-rose-500 text-white rounded transition shadow-lg shadow-rose-500/20">Apply Changes</button>
+        </div>
+    </div>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['overview', 'projects', 'kanban', 'queues', 'schedules', 'approvals', 'resources', 'cost', 'alerts'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    const activeBtn = document.getElementById('mode-btn-' + mode);
+    if(activeBtn) {
+        activeBtn.classList.add('bg-zinc-800/50', 'text-white');
+        activeBtn.classList.remove('text-zinc-400');
+    }
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  function showMaintenanceModal() {
+      document.getElementById('maintenance-modal').classList.remove('hidden');
+  }
+  
+  function hideMaintenanceModal() {
+      document.getElementById('maintenance-modal').classList.add('hidden');
+  }
+  
+  function applyMaintenance() {
+      hideMaintenanceModal();
+      alert("Operations control policy applied. Audit log updated.");
+  }
+  
+  function approveAction() {
+      alert("Action approved. Resolving dependency blockers and resuming execution.");
+  }
+</script>
+</body>
+</html>

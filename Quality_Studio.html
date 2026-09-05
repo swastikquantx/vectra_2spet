@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Quality Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #8b5cf6; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0 z-10">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='Admin.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Quality Engine</span>
+            <span class="text-[10px] bg-violet-500/10 text-violet-400 px-2 py-0.5 rounded ml-2 uppercase font-bold border border-violet-500/20">BGV Portal</span>
+            <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded ml-1 font-mono">v1</span>
+        </div>
+     </div>
+     
+     <div class="flex items-center gap-2">
+         <span class="text-[10px] text-zinc-500 font-mono mr-2">Target: <span class="text-white">FULLSTACK APP</span></span>
+         <button class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded transition font-medium">Quality History</button>
+         <button onclick="runQualityCheck()" class="text-xs bg-violet-600 hover:bg-violet-500 text-white px-4 py-1.5 rounded transition font-medium shadow-lg shadow-violet-500/20 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Run Quality Check
+         </button>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Quality Pipeline</span>
+    </div>
+    <div class="space-y-1">
+      <button onclick="setMode('overview')" id="mode-btn-overview" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Overview & Gates
+      </button>
+      <button onclick="setMode('findings')" id="mode-btn-findings" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Findings & Defects
+      </button>
+      <button onclick="setMode('tests')" id="mode-btn-tests" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Test Execution
+      </button>
+      <button onclick="setMode('critic')" id="mode-btn-critic" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         AI Critic
+      </button>
+      <button onclick="setMode('repairs')" id="mode-btn-repairs" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Repair Engine
+      </button>
+      <button onclick="setMode('regression')" id="mode-btn-regression" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white mt-4 border border-zinc-800">
+         <span class="w-2 h-2 rounded-full bg-violet-500"></span> Regression Baseline
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    
+    <!-- OVERVIEW PANEL -->
+    <div id="panel-overview" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-5xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Quality Scorecard</h2>
+            <p class="text-sm text-zinc-400">Aggregated quality gate metrics for the current target.</p>
+          </div>
+          
+          <div class="grid grid-cols-4 gap-4">
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Code Quality</div>
+                  <div class="text-sm text-white font-medium flex justify-between items-center">
+                      PASS <span class="text-emerald-500 text-xs">✓</span>
+                  </div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Security / Secrets</div>
+                  <div class="text-sm text-white font-medium flex justify-between items-center">
+                      PASS <span class="text-emerald-500 text-xs">✓</span>
+                  </div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">API & DB Schema</div>
+                  <div class="text-sm text-white font-medium flex justify-between items-center">
+                      WARNING <span class="text-amber-500 text-xs">⚠</span>
+                  </div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Accessibility</div>
+                  <div class="text-sm text-white font-medium flex justify-between items-center">
+                      PASS <span class="text-emerald-500 text-xs">✓</span>
+                  </div>
+              </div>
+          </div>
+
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+              <h3 class="font-bold text-sm text-white mb-4">Release Quality Gate</h3>
+              <div class="p-4 border border-zinc-800 rounded bg-black flex justify-between items-center">
+                  <div>
+                      <div class="text-sm font-bold text-white">Gate Status: <span class="text-emerald-500">READY</span></div>
+                      <div class="text-xs text-zinc-400 mt-1">No critical blockers found. 2 non-critical warnings open.</div>
+                  </div>
+                  <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded font-bold border border-emerald-500/20">PASS_WITH_WARNINGS</span>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- FINDINGS PANEL -->
+    <div id="panel-findings" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-5xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Quality Findings</h2>
+            <p class="text-sm text-zinc-400">Defects and observations across all validation layers.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl overflow-hidden">
+              <table class="w-full text-left text-sm text-zinc-300">
+                  <thead class="bg-zinc-900 text-xs uppercase font-medium text-zinc-500 border-b border-zinc-800">
+                      <tr>
+                          <th class="p-4">Severity</th>
+                          <th class="p-4">Category</th>
+                          <th class="p-4">Description</th>
+                          <th class="p-4">Resource</th>
+                          <th class="p-4">Status</th>
+                      </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800">
+                      <tr>
+                          <td class="p-4"><span class="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded border border-amber-500/20">MEDIUM</span></td>
+                          <td class="p-4 text-xs font-mono">DB_SCHEMA</td>
+                          <td class="p-4 text-xs">Missing default value for required column 'status'.</td>
+                          <td class="p-4 text-xs text-zinc-400">src/db/schema.ts</td>
+                          <td class="p-4"><span class="text-blue-400 text-xs">FIX_PLANNED</span></td>
+                      </tr>
+                      <tr>
+                          <td class="p-4"><span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">INFO</span></td>
+                          <td class="p-4 text-xs font-mono">CONTENT</td>
+                          <td class="p-4 text-xs">Placeholder text 'Lorem ipsum' detected in footer.</td>
+                          <td class="p-4 text-xs text-zinc-400">src/components/Footer.tsx</td>
+                          <td class="p-4"><span class="text-zinc-500 text-xs">OPEN</span></td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+       </div>
+    </div>
+    
+    <!-- REPAIRS PANEL -->
+    <div id="panel-repairs" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Repair Engine</h2>
+            <p class="text-sm text-zinc-400">Scoped automated fixes for deterministic and AI critic findings.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+              <div class="flex justify-between items-start mb-4 border-b border-zinc-800 pb-4">
+                  <div>
+                      <h3 class="font-bold text-sm text-white">Repair Plan: RP-1029</h3>
+                      <div class="text-xs text-zinc-400 mt-1">Fixing: <span class="font-mono">DB_SCHEMA</span> • Missing default value</div>
+                  </div>
+                  <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">AUTO_SAFE</span>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4 text-xs font-mono">
+                  <div>
+                      <div class="text-[10px] text-zinc-500 mb-1">Current (src/db/schema.ts)</div>
+                      <div class="bg-black border border-rose-500/30 rounded p-3 text-rose-300">
+status: varchar('status', { length: 50 }).notNull()
+                      </div>
+                  </div>
+                  <div>
+                      <div class="text-[10px] text-zinc-500 mb-1">Proposed Change</div>
+                      <div class="bg-black border border-emerald-500/30 rounded p-3 text-emerald-300">
+status: varchar('status', { length: 50 }).default('NEW').notNull()
+                      </div>
+                  </div>
+              </div>
+              
+              <div class="mt-5 flex justify-end gap-3">
+                  <button class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded text-sm font-medium transition">Ignore</button>
+                  <button onclick="applyRepair()" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded text-sm font-bold transition shadow-lg shadow-violet-500/20">Apply & Retest</button>
+              </div>
+          </div>
+       </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Validation Toast -->
+<div id="quality-toast" class="hidden absolute bottom-4 right-4 bg-zinc-900 border-l-4 border-violet-500 p-4 rounded shadow-2xl z-50 min-w-[300px]">
+    <div class="flex justify-between items-start mb-2">
+        <strong class="text-white text-sm">Quality Run Started</strong>
+        <button onclick="document.getElementById('quality-toast').classList.add('hidden')" class="text-zinc-500 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+    </div>
+    <ul class="text-xs space-y-1 text-zinc-400">
+        <li class="flex gap-2 items-start"><span class="text-violet-500 spinner shrink-0 w-3 h-3 mt-0.5 border-[2px]"></span> Running static code checks...</li>
+        <li class="flex gap-2 items-start"><span class="text-zinc-500">⏳</span> Validating API contracts...</li>
+        <li class="flex gap-2 items-start"><span class="text-zinc-500">⏳</span> Invoking AI Critic...</li>
+    </ul>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['overview', 'findings', 'tests', 'critic', 'repairs', 'regression'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    const activeBtn = document.getElementById('mode-btn-' + mode);
+    if(activeBtn) {
+        activeBtn.classList.add(mode === 'regression' ? 'bg-zinc-800' : 'bg-zinc-800/50', 'text-white');
+        activeBtn.classList.remove('text-zinc-400');
+    }
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  function runQualityCheck() {
+      document.getElementById('quality-toast').classList.remove('hidden');
+  }
+  
+  function applyRepair() {
+      alert("Repair applied. Triggering retest and updating baseline.");
+  }
+</script>
+</body>
+</html>

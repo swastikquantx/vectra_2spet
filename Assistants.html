@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - AI Assistants</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #10b981; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='User_Dashboard.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">AI Assistants</span>
+        </div>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Configuration</span>
+    </div>
+    <div class="space-y-1">
+      <button onclick="setMode('templates')" id="mode-btn-templates" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Templates
+      </button>
+      <button onclick="setMode('behavior')" id="mode-btn-behavior" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Instructions & Voice
+      </button>
+      <button onclick="setMode('knowledge')" id="mode-btn-knowledge" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Knowledge & Tools
+      </button>
+      <button onclick="setMode('test')" id="mode-btn-test" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Test & Publish
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    <!-- TEMPLATES PANEL -->
+    <div id="panel-templates" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Select a Template</h2>
+            <p class="text-sm text-zinc-400">Choose a base configuration or start from scratch.</p>
+          </div>
+          
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div class="bg-zinc-900 border border-emerald-500/50 rounded-xl p-5 cursor-pointer hover:border-emerald-500 transition-colors">
+                  <h3 class="text-emerald-400 font-bold mb-1">Customer Support</h3>
+                  <p class="text-xs text-zinc-400 mb-3">Answer FAQs, provide product guidance, and escalate issues.</p>
+                  <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">Recommended</span>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 cursor-pointer hover:border-zinc-700 transition-colors">
+                  <h3 class="text-white font-bold mb-1">Lead Qualification</h3>
+                  <p class="text-xs text-zinc-400">Ask qualifying questions and capture contact details.</p>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 cursor-pointer hover:border-zinc-700 transition-colors">
+                  <h3 class="text-white font-bold mb-1">Sales Assistant</h3>
+                  <p class="text-xs text-zinc-400">Product comparison, pricing explanation, and recommendations.</p>
+              </div>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6 mt-6">
+              <h3 class="text-sm font-bold text-white mb-2">Or Use AI Prompt-to-Assistant</h3>
+              <textarea rows="2" class="w-full bg-zinc-900 border border-zinc-700 rounded text-sm text-zinc-300 p-3 focus:outline-none focus:border-emerald-500 custom-scrollbar mb-3" placeholder="e.g. Create a bilingual English/Hindi customer support chatbot for my store..."></textarea>
+              <button onclick="nextStep('behavior')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded text-sm font-medium">Generate Draft Configuration</button>
+          </div>
+       </div>
+    </div>
+    
+    <!-- BEHAVIOR PANEL -->
+    <div id="panel-behavior" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Instructions & Voice</h2>
+            <p class="text-sm text-zinc-400">Define how the assistant should behave and sound.</p>
+          </div>
+          
+          <div class="space-y-4">
+              <div class="bg-[#121214] border border-zinc-800 rounded p-5">
+                  <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-2">System Instructions</label>
+                  <textarea rows="6" class="w-full bg-zinc-900 border border-zinc-700 rounded text-sm text-zinc-300 p-3 focus:outline-none focus:border-emerald-500 custom-scrollbar">You are a helpful customer support assistant. Answer questions based ONLY on the provided knowledge base. If you do not know the answer, politely offer to escalate the issue to a human agent. Do not invent pricing or features.</textarea>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4">
+                  <div class="bg-[#121214] border border-zinc-800 rounded p-5">
+                      <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-2">Brand Kit Tone</label>
+                      <select class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none">
+                          <option>Professional</option>
+                          <option>Friendly</option>
+                          <option>Formal</option>
+                      </select>
+                  </div>
+                  <div class="bg-[#121214] border border-zinc-800 rounded p-5">
+                      <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-2">Voice Integration (Optional)</label>
+                      <select class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none">
+                          <option>Text Only (No Voice)</option>
+                          <option>System Voice: Emma</option>
+                          <option>Custom Profile (Requires Consent)</option>
+                      </select>
+                  </div>
+              </div>
+          </div>
+          <button onclick="nextStep('knowledge')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded font-medium mt-4 w-full">Continue</button>
+       </div>
+    </div>
+    
+    <!-- KNOWLEDGE & TOOLS PANEL -->
+    <div id="panel-knowledge" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Knowledge & Tools</h2>
+            <p class="text-sm text-zinc-400">Connect isolated project knowledge and approve tool usage.</p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-6">
+              <div class="bg-[#121214] border border-zinc-800 rounded p-5">
+                  <h3 class="text-white font-bold mb-4">Knowledge Base</h3>
+                  <div class="space-y-2 mb-4">
+                      <div class="flex items-center justify-between p-2 bg-zinc-900 border border-zinc-700 rounded text-sm">
+                          <span>FAQ Document (FAQ.pdf)</span>
+                          <span class="text-emerald-400 text-xs">Active</span>
+                      </div>
+                      <div class="flex items-center justify-between p-2 bg-zinc-900 border border-zinc-700 rounded text-sm">
+                          <span>Return Policy (Text)</span>
+                          <span class="text-emerald-400 text-xs">Active</span>
+                      </div>
+                  </div>
+                  <button class="w-full border border-dashed border-zinc-600 text-zinc-400 hover:text-white hover:border-zinc-400 py-2 rounded text-sm transition-colors">
+                      + Add Knowledge Source
+                  </button>
+              </div>
+              
+              <div class="bg-[#121214] border border-zinc-800 rounded p-5">
+                  <h3 class="text-white font-bold mb-4">Tool Registry (P16 Foundation)</h3>
+                  <div class="space-y-3">
+                      <div class="flex items-start justify-between">
+                          <div>
+                              <div class="text-sm text-white">Escalate to Human</div>
+                              <div class="text-[10px] text-zinc-500">Creates structured EscalationRequest</div>
+                          </div>
+                          <input type="checkbox" checked class="mt-1 bg-zinc-900 border-zinc-700 rounded text-emerald-600 focus:ring-emerald-500">
+                      </div>
+                      <div class="flex items-start justify-between opacity-50">
+                          <div>
+                              <div class="text-sm text-white">Check CRM Record</div>
+                              <div class="text-[10px] text-zinc-500">Integration Not Available</div>
+                          </div>
+                          <input type="checkbox" disabled class="mt-1 bg-zinc-900 border-zinc-700 rounded">
+                      </div>
+                      <div class="flex items-start justify-between">
+                          <div>
+                              <div class="text-sm text-white">Generate Image (P5)</div>
+                              <div class="text-[10px] text-amber-500">Requires User Confirmation</div>
+                          </div>
+                          <input type="checkbox" class="mt-1 bg-zinc-900 border-zinc-700 rounded text-emerald-600 focus:ring-emerald-500">
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+          <button onclick="nextStep('test')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded font-medium mt-4 w-full">Continue to Test</button>
+       </div>
+    </div>
+    
+    <!-- TEST & PUBLISH PANEL -->
+    <div id="panel-test" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Test & Publish</h2>
+              <p class="text-sm text-zinc-400">Test the draft assistant before deploying the embed widget.</p>
+            </div>
+            <span class="bg-amber-500/10 text-amber-500 px-3 py-1 rounded text-xs font-bold border border-amber-500/20">DRAFT v1</span>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-6 h-[400px]">
+             <!-- Chat Interface Mock -->
+             <div class="bg-[#121214] border border-zinc-800 rounded-xl flex flex-col overflow-hidden relative">
+                 <div class="bg-zinc-900 p-3 border-b border-zinc-800 flex justify-between items-center">
+                     <span class="text-sm font-bold text-white">Preview Chat</span>
+                     <button onclick="testChat()" class="text-xs bg-zinc-800 px-2 py-1 rounded text-zinc-300 hover:text-white">Start Session</button>
+                 </div>
+                 <div id="chat-window" class="flex-1 p-4 overflow-y-auto space-y-4 custom-scrollbar text-sm">
+                     <div class="text-center text-xs text-zinc-600 mt-10">Click 'Start Session' to test.</div>
+                 </div>
+                 <div class="p-3 bg-zinc-900 border-t border-zinc-800 flex gap-2">
+                     <input type="text" placeholder="Type message..." class="flex-1 bg-zinc-800 rounded px-3 py-2 text-sm text-white focus:outline-none" disabled>
+                 </div>
+             </div>
+             
+             <!-- Embed / Export Config -->
+             <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5 flex flex-col">
+                 <h3 class="text-white font-bold mb-4">Embed Configuration</h3>
+                 <div class="space-y-4 flex-1">
+                     <div>
+                         <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Allowed Domains</label>
+                         <input type="text" placeholder="example.com" class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none">
+                     </div>
+                     <div class="bg-zinc-900 p-3 rounded border border-zinc-800 text-xs text-zinc-400 font-mono">
+                         &lt;script src="https://cdn.vectra.ai/embed.js" data-assistant-id="ast_12345"&gt;&lt;/script&gt;
+                     </div>
+                     <p class="text-[10px] text-zinc-500">Widget requires activation. Secrets are retained securely server-side.</p>
+                 </div>
+                 
+                 <button onclick="activateAssistant()" id="btn-activate" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-lg font-bold transition-all shadow-lg shadow-emerald-500/20 mt-4">
+                     Activate Assistant & Generate Widget
+                 </button>
+                 <p id="activate-result" class="hidden text-sm text-zinc-300 mt-4 text-center">Assistant Activated! v1 is Live.</p>
+             </div>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['templates', 'behavior', 'knowledge', 'test'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    document.getElementById('mode-btn-' + mode).classList.add('bg-zinc-800/50', 'text-white');
+    document.getElementById('mode-btn-' + mode).classList.remove('text-zinc-400');
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  function nextStep(step) {
+      setMode(step);
+  }
+  
+  async function testChat() {
+      const win = document.getElementById('chat-window');
+      win.innerHTML = `<div class="spinner border-t-emerald-500 border-l-emerald-500 mx-auto mt-10"></div>`;
+      
+      try {
+          const res = await fetch('/api/assistants/test', { method: 'POST' });
+          const data = await res.json();
+          win.innerHTML = `
+              <div class="flex justify-start">
+                  <div class="bg-zinc-800 text-zinc-300 p-3 rounded-lg rounded-tl-none max-w-[80%]">
+                      Hello! I'm your Vectra Support Assistant. How can I help you today?
+                  </div>
+              </div>
+          `;
+      } catch (e) {
+          win.innerHTML = `<div class="text-center text-xs text-rose-500 mt-10">Test Failed.</div>`;
+      }
+  }
+
+  async function activateAssistant() {
+      const btn = document.getElementById('btn-activate');
+      btn.innerHTML = `<div class="spinner border-t-white border-l-white inline-block align-middle mr-2"></div> Activating...`;
+      btn.disabled = true;
+      
+      try {
+          const res = await fetch('/api/assistants/activate', { method: 'POST' });
+          const data = await res.json();
+          document.getElementById('activate-result').classList.remove('hidden');
+          btn.innerHTML = 'Assistant Active';
+          btn.classList.replace('bg-emerald-600', 'bg-blue-600');
+      } catch(e) {
+          alert('Failed to activate assistant.');
+          btn.innerHTML = 'Activate Assistant';
+          btn.disabled = false;
+      }
+  }
+</script>
+</body>
+</html>

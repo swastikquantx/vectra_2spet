@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /preview/
+Allow: /
+Sitemap: https://vectra.swastik.ai/sitemap.xml

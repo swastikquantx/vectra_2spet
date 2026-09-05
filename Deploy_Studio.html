@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Deployment Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #ef4444; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0 z-10">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='Admin.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Deployment Engine</span>
+            <span class="text-[10px] bg-red-500/10 text-red-400 px-2 py-0.5 rounded ml-2 uppercase font-bold border border-red-500/20">BGV Portal</span>
+            <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded ml-1 font-mono">v1.0.0</span>
+        </div>
+     </div>
+     
+     <div class="flex items-center gap-2">
+         <span class="text-[10px] text-zinc-500 font-mono mr-2">Environment: <span class="text-white">PRODUCTION</span></span>
+         <button onclick="showApproval()" class="text-xs bg-red-600 hover:bg-red-500 text-white px-4 py-1.5 rounded transition font-medium shadow-lg shadow-red-500/20 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            Review & Approve Deploy
+         </button>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Deployment Pipeline</span>
+    </div>
+    <div class="space-y-1">
+      <button onclick="setMode('plan')" id="mode-btn-plan" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Deployment Plan
+      </button>
+      <button onclick="setMode('target')" id="mode-btn-target" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Target & Hosting
+      </button>
+      <button onclick="setMode('db')" id="mode-btn-db" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Database & Migrations
+      </button>
+      <button onclick="setMode('env')" id="mode-btn-env" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Secrets & Env
+      </button>
+      <button onclick="setMode('domain')" id="mode-btn-domain" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Domain & SSL
+      </button>
+      <button onclick="setMode('status')" id="mode-btn-status" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white mt-4 border border-zinc-800">
+         <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Active Deployments
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    
+    <!-- PLAN PANEL -->
+    <div id="panel-plan" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Deployment Plan</h2>
+            <p class="text-sm text-zinc-400">Pre-deployment analysis for production environment.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+              <div class="grid grid-cols-2 gap-6">
+                  <div>
+                      <h3 class="font-bold text-sm text-white mb-3">Release Details</h3>
+                      <div class="space-y-2 text-xs text-zinc-300">
+                          <div class="flex justify-between border-b border-zinc-800 pb-1"><span class="text-zinc-500">Version</span> <span class="font-mono">v1.0.0</span></div>
+                          <div class="flex justify-between border-b border-zinc-800 pb-1"><span class="text-zinc-500">Package Checksum</span> <span class="font-mono text-emerald-400">e3b0c442...</span></div>
+                          <div class="flex justify-between border-b border-zinc-800 pb-1"><span class="text-zinc-500">Staging Verified</span> <span class="text-emerald-500">Yes</span></div>
+                          <div class="flex justify-between border-b border-zinc-800 pb-1"><span class="text-zinc-500">Temp Admin Excluded</span> <span class="text-emerald-500">Yes</span></div>
+                      </div>
+                  </div>
+                  <div>
+                      <h3 class="font-bold text-sm text-white mb-3">Deployment Target</h3>
+                      <div class="space-y-2 text-xs text-zinc-300">
+                          <div class="flex justify-between border-b border-zinc-800 pb-1"><span class="text-zinc-500">Hosting</span> <span>Vercel Adapter</span></div>
+                          <div class="flex justify-between border-b border-zinc-800 pb-1"><span class="text-zinc-500">Database</span> <span>Supabase Postgres</span></div>
+                          <div class="flex justify-between border-b border-zinc-800 pb-1"><span class="text-zinc-500">CI/CD</span> <span>Direct Artifact Push</span></div>
+                          <div class="flex justify-between border-b border-zinc-800 pb-1"><span class="text-zinc-500">Est. External Cost</span> <span class="text-zinc-400">Unknown (Target billing applies)</span></div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+              <h3 class="font-bold text-sm text-white mb-4">Action Summary</h3>
+              <ul class="text-sm space-y-2">
+                  <li class="flex gap-3"><span class="w-5 text-center text-blue-500">→</span> <span class="text-zinc-300">Push artifact to Vercel production</span></li>
+                  <li class="flex gap-3"><span class="w-5 text-center text-rose-500">⚠</span> <span class="text-zinc-300">Apply 2 new database migrations <span class="text-[10px] bg-rose-500/10 text-rose-500 px-1.5 py-0.5 rounded border border-rose-500/20 ml-2">REQUIRES APPROVAL</span></span></li>
+                  <li class="flex gap-3"><span class="w-5 text-center text-blue-500">→</span> <span class="text-zinc-300">Inject 3 production secrets</span></li>
+                  <li class="flex gap-3"><span class="w-5 text-center text-emerald-500">✓</span> <span class="text-zinc-300">No DNS changes planned</span></li>
+              </ul>
+          </div>
+       </div>
+    </div>
+    
+    <!-- DB MIGRATION PANEL -->
+    <div id="panel-db" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Database & Migrations</h2>
+            <p class="text-sm text-zinc-400">Review pending schema changes for production.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-rose-500/30 rounded-xl p-5 relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
+              <div class="flex justify-between items-start mb-4">
+                  <h3 class="font-bold text-sm text-white">Pending Migration: v1.0.0 Schema Update</h3>
+                  <span class="text-[10px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded uppercase font-bold flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> POTENTIALLY DESTRUCTIVE</span>
+              </div>
+              
+              <div class="bg-black border border-zinc-800 rounded p-4 font-mono text-xs text-zinc-400 whitespace-pre">
+-- Migration: 002_update_cases.sql
+ALTER TABLE "VerificationCase" ADD COLUMN "priority" VARCHAR(20) DEFAULT 'NORMAL';
+ALTER TABLE "VerificationCase" DROP COLUMN "old_notes"; -- <span class="text-rose-400">WARNING: Data loss</span>
+              </div>
+              
+              <div class="mt-4 p-3 bg-zinc-900 border border-zinc-800 rounded flex gap-3 items-start">
+                  <input type="checkbox" id="backup-check" class="mt-1">
+                  <label for="backup-check" class="text-xs text-zinc-300">I confirm a production database backup has been taken. I approve running this migration script.</label>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<!-- Approval Modal -->
+<div id="approval-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-[#18181b] border border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col">
+        <div class="p-5 border-b border-zinc-800">
+            <h3 class="text-lg font-bold text-white">Confirm Production Deployment</h3>
+            <p class="text-xs text-zinc-400 mt-1">You are about to modify live infrastructure.</p>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="p-3 bg-rose-500/10 border border-rose-500/20 rounded text-rose-400 text-sm">
+                <strong>Warning:</strong> This deployment includes a database migration that drops columns. Ensure backups are current.
+            </div>
+            
+            <div class="space-y-3 text-sm text-zinc-300">
+                <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
+                    <span>Target Environment</span> <strong class="text-white">PRODUCTION</strong>
+                </div>
+                <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
+                    <span>Release Version</span> <strong class="text-white font-mono">v1.0.0</strong>
+                </div>
+                <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
+                    <span>Action</span> <strong class="text-white">Deploy App + Run Migration</strong>
+                </div>
+            </div>
+            
+            <div class="pt-4">
+                <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer hover:text-white">
+                    <input type="checkbox" id="confirm-check" class="rounded border-zinc-700 bg-zinc-900">
+                    I acknowledge and approve these changes to production.
+                </label>
+            </div>
+        </div>
+        <div class="p-5 border-t border-zinc-800 bg-[#121214] flex justify-end gap-3">
+            <button onclick="hideApproval()" class="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white transition">Cancel</button>
+            <button onclick="executeDeploy()" class="px-5 py-2 text-sm font-bold bg-rose-600 hover:bg-rose-500 text-white rounded transition shadow-lg shadow-rose-500/20">Execute Deployment</button>
+        </div>
+    </div>
+</div>
+
+<!-- Deployment Toast -->
+<div id="deploy-toast" class="hidden absolute bottom-4 right-4 bg-zinc-900 border-l-4 border-blue-500 p-4 rounded shadow-2xl z-50 min-w-[300px]">
+    <div class="flex justify-between items-start mb-2">
+        <strong class="text-white text-sm">Deployment Job Queued</strong>
+        <button onclick="document.getElementById('deploy-toast').classList.add('hidden')" class="text-zinc-500 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+    </div>
+    <ul class="text-xs space-y-1 text-zinc-400">
+        <li class="flex gap-2 items-start"><span class="text-blue-500 spinner shrink-0 w-3 h-3 mt-0.5 border-[2px]"></span> Executing migration...</li>
+        <li class="flex gap-2 items-start"><span class="text-zinc-500">⏳</span> Deploying to target adapter...</li>
+        <li class="flex gap-2 items-start"><span class="text-zinc-500">⏳</span> Running post-deploy healthcheck...</li>
+    </ul>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['plan', 'target', 'db', 'env', 'domain', 'status'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    document.getElementById('mode-btn-' + mode).classList.add(mode === 'status' ? 'bg-zinc-800' : 'bg-zinc-800/50', 'text-white');
+    document.getElementById('mode-btn-' + mode).classList.remove('text-zinc-400');
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  function showApproval() {
+      document.getElementById('approval-modal').classList.remove('hidden');
+  }
+  
+  function hideApproval() {
+      document.getElementById('approval-modal').classList.add('hidden');
+  }
+  
+  function executeDeploy() {
+      hideApproval();
+      document.getElementById('deploy-toast').classList.remove('hidden');
+  }
+</script>
+</body>
+</html>

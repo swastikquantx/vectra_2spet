@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Ads Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #f59e0b; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='User_Dashboard.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Ads Engine & Campaign Production</span>
+        </div>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Campaign Steps</span>
+    </div>
+    <div class="space-y-1">
+      <button onclick="setMode('brief')" id="mode-btn-brief" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Campaign Brief
+      </button>
+      <button onclick="setMode('strategy')" id="mode-btn-strategy" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Strategy & Concepts
+      </button>
+      <button onclick="setMode('copy')" id="mode-btn-copy" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Ad Copy
+      </button>
+      <button onclick="setMode('creative')" id="mode-btn-creative" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Creative Production
+      </button>
+      <button onclick="setMode('export')" id="mode-btn-export" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Review & Export
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    <!-- BRIEF PANEL -->
+    <div id="panel-brief" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Campaign Brief</h2>
+            <p class="text-sm text-zinc-400">Define objective, audience, and offer for the campaign.</p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-6">
+              <div class="bg-[#121214] border border-zinc-800 rounded p-5 space-y-4">
+                  <div>
+                      <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Campaign Objective</label>
+                      <select class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none">
+                          <option>Brand Awareness</option>
+                          <option>Lead Generation</option>
+                          <option>Product Launch</option>
+                          <option>Trial Signup</option>
+                      </select>
+                  </div>
+                  <div>
+                      <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Target Audience</label>
+                      <textarea rows="2" class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none custom-scrollbar" placeholder="e.g. Small business owners looking to automate..."></textarea>
+                  </div>
+              </div>
+              <div class="bg-[#121214] border border-zinc-800 rounded p-5 space-y-4">
+                   <div>
+                      <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Product & Offer</label>
+                      <textarea rows="2" class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none custom-scrollbar" placeholder="Vectra AI Factory - 14 Day Free Trial"></textarea>
+                  </div>
+                  <div>
+                      <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Brand Kit / Tone</label>
+                      <select class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none">
+                          <option>Professional & Authoritative</option>
+                          <option>Friendly & Approachable</option>
+                          <option>Urgent & Exciting</option>
+                      </select>
+                  </div>
+              </div>
+          </div>
+          <button onclick="nextStep('strategy')" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded font-medium mt-4">Generate Strategy</button>
+       </div>
+    </div>
+    
+    <!-- STRATEGY PANEL -->
+    <div id="panel-strategy" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Strategy & Angles</h2>
+              <p class="text-sm text-zinc-400">Review AI-generated campaign angles and visual concepts.</p>
+            </div>
+            <button onclick="generateStrategy()" id="btn-strategy" class="bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded text-sm">Generate Concepts</button>
+          </div>
+          
+          <div id="strategy-result" class="hidden space-y-4">
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-5 relative group">
+                  <div class="absolute top-4 right-4"><input type="checkbox" checked class="w-4 h-4 bg-zinc-800 border-zinc-700 rounded text-amber-600 focus:ring-amber-500"></div>
+                  <h3 class="text-white font-bold mb-2">Angle 1: Problem / Solution</h3>
+                  <p class="text-sm text-zinc-400 mb-2"><strong>Hook:</strong> Tired of juggling 10 different AI tools?</p>
+                  <p class="text-sm text-zinc-400"><strong>Visual:</strong> Split screen showing messy tabs vs single Vectra dashboard.</p>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-5 relative group">
+                  <div class="absolute top-4 right-4"><input type="checkbox" checked class="w-4 h-4 bg-zinc-800 border-zinc-700 rounded text-amber-600 focus:ring-amber-500"></div>
+                  <h3 class="text-white font-bold mb-2">Angle 2: Educational (Founder Message)</h3>
+                  <p class="text-sm text-zinc-400 mb-2"><strong>Hook:</strong> Here is how we automated our creative production...</p>
+                  <p class="text-sm text-zinc-400"><strong>Visual:</strong> Talking-head presenter using P14 Avatar Studio.</p>
+              </div>
+              <button onclick="nextStep('copy')" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded font-medium mt-4 w-full">Proceed to Copy</button>
+          </div>
+       </div>
+    </div>
+    
+    <!-- COPY PANEL -->
+    <div id="panel-copy" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Ad Copy Engine</h2>
+              <p class="text-sm text-zinc-400">Review structured copy variations for selected angles.</p>
+            </div>
+            <button onclick="generateCopy()" id="btn-copy" class="bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded text-sm">Generate Copy</button>
+          </div>
+          
+          <div id="copy-result" class="hidden space-y-4">
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-5">
+                  <div class="flex items-center justify-between mb-4">
+                      <h3 class="text-white font-semibold">Angle 1: Problem / Solution</h3>
+                      <span class="text-[10px] bg-zinc-800 px-2 py-1 rounded">Facebook / Instagram</span>
+                  </div>
+                  <div class="space-y-3">
+                      <div>
+                          <label class="text-[10px] text-zinc-500 uppercase">Primary Text</label>
+                          <textarea rows="3" class="w-full bg-transparent border-none text-sm text-zinc-300 resize-none outline-none custom-scrollbar">Stop paying for 10 disjointed AI subscriptions. Meet Vectra: the all-in-one creative factory that handles research, video, avatars, and dubbing in a single unified workflow. Start your 14-day free trial.</textarea>
+                      </div>
+                      <div>
+                          <label class="text-[10px] text-zinc-500 uppercase">Headline</label>
+                          <input type="text" value="The Ultimate AI Creative Factory" class="w-full bg-transparent border-none text-sm text-white font-medium outline-none">
+                      </div>
+                  </div>
+              </div>
+              <button onclick="nextStep('creative')" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded font-medium mt-4 w-full">Proceed to Creative Production</button>
+          </div>
+       </div>
+    </div>
+    
+    <!-- CREATIVE PANEL -->
+    <div id="panel-creative" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Creative Production Gate</h2>
+            <p class="text-sm text-zinc-400">Review production workload and select formats before generating expensive media.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6">
+             <div class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                 <div class="bg-zinc-900 p-3 rounded border border-zinc-800">
+                     <div class="text-[10px] text-zinc-500 uppercase mb-1">Concepts</div>
+                     <div class="text-xl font-bold text-white">2</div>
+                 </div>
+                 <div class="bg-zinc-900 p-3 rounded border border-zinc-800">
+                     <div class="text-[10px] text-zinc-500 uppercase mb-1">Formats</div>
+                     <div class="text-xl font-bold text-white">16:9, 9:16</div>
+                 </div>
+                 <div class="bg-zinc-900 p-3 rounded border border-zinc-800">
+                     <div class="text-[10px] text-zinc-500 uppercase mb-1">Languages</div>
+                     <div class="text-xl font-bold text-white">English, Hindi</div>
+                 </div>
+                 <div class="bg-zinc-900 p-3 rounded border border-amber-500/30">
+                     <div class="text-[10px] text-amber-500 uppercase mb-1">Total Assets</div>
+                     <div class="text-xl font-bold text-amber-500">8</div>
+                 </div>
+             </div>
+             
+             <div class="bg-zinc-900 border border-zinc-700 rounded p-4 mb-6">
+                 <h4 class="text-sm font-semibold text-white mb-2">Landing Page Brief Generated</h4>
+                 <p class="text-xs text-zinc-400">A structured LandingPageBrief has been created for future handoff to Vectra Page Creator.</p>
+             </div>
+             
+             <button onclick="generateAssets()" id="btn-assets" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-3 rounded-lg font-bold transition-all shadow-lg shadow-amber-500/20">
+                 Approve & Generate 8 Campaign Assets
+             </button>
+             <p id="assets-result" class="hidden text-sm text-zinc-300 mt-4 text-center">Invoking P5, P6, P10, and P14... Assets queued.</p>
+          </div>
+       </div>
+    </div>
+    
+    <!-- EXPORT PANEL -->
+    <div id="panel-export" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Campaign Package Export</h2>
+            <p class="text-sm text-zinc-400">Download independent assets, copy, and machine-readable manifest.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6">
+             <div class="flex items-center gap-3 mb-6 p-4 bg-zinc-900 border border-zinc-800 rounded">
+                 <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                 <div>
+                     <h4 class="text-sm font-bold text-white">Exportable Package Ready</h4>
+                     <p class="text-xs text-zinc-400">Assets are independent and do not require Vectra runtime.</p>
+                 </div>
+             </div>
+             
+             <button onclick="exportCampaign()" id="btn-export" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-lg font-bold transition-all shadow-lg shadow-emerald-500/20">
+                 Export Campaign ZIP
+             </button>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['brief', 'strategy', 'copy', 'creative', 'export'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    document.getElementById('mode-btn-' + mode).classList.add('bg-zinc-800/50', 'text-white');
+    document.getElementById('mode-btn-' + mode).classList.remove('text-zinc-400');
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  function nextStep(step) {
+      setMode(step);
+  }
+
+  async function generateStrategy() {
+      const btn = document.getElementById('btn-strategy');
+      btn.innerHTML = `<div class="spinner border-t-white border-l-white"></div>`;
+      setTimeout(() => {
+          document.getElementById('strategy-result').classList.remove('hidden');
+          btn.innerHTML = 'Complete';
+      }, 1000);
+  }
+
+  async function generateCopy() {
+      const btn = document.getElementById('btn-copy');
+      btn.innerHTML = `<div class="spinner border-t-white border-l-white"></div>`;
+      setTimeout(() => {
+          document.getElementById('copy-result').classList.remove('hidden');
+          btn.innerHTML = 'Complete';
+      }, 1000);
+  }
+
+  async function generateAssets() {
+      const btn = document.getElementById('btn-assets');
+      btn.innerHTML = `<div class="spinner border-t-white border-l-white inline-block align-middle mr-2"></div> Generating...`;
+      btn.disabled = true;
+      
+      try {
+          const res = await fetch('/api/campaign/generate', { method: 'POST' });
+          const data = await res.json();
+          document.getElementById('assets-result').classList.remove('hidden');
+          btn.innerHTML = 'Assets Generated';
+          btn.classList.replace('bg-amber-600', 'bg-emerald-600');
+          setTimeout(() => nextStep('export'), 1000);
+      } catch(e) {
+          alert('Failed to submit job.');
+          btn.innerHTML = 'Approve & Generate';
+          btn.disabled = false;
+      }
+  }
+
+  function exportCampaign() {
+      const btn = document.getElementById('btn-export');
+      btn.innerHTML = "Downloading Package...";
+      setTimeout(() => btn.innerHTML = "Export Campaign ZIP", 2000);
+  }
+</script>
+</body>
+</html>

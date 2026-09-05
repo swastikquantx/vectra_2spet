@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Visual Page Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #3b82f6; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0 z-10">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='Creator_Studio.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Page Builder</span>
+            <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded ml-2 uppercase font-bold border border-blue-500/20">QuantX Landing</span>
+            <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded ml-1 font-mono">v1 DRAFT</span>
+        </div>
+     </div>
+     
+     <div class="flex items-center gap-2">
+         <!-- Responsive Controls -->
+         <div class="flex items-center bg-zinc-900 rounded border border-zinc-800 p-1 mr-4">
+             <button onclick="setViewport('desktop')" id="vp-desktop" class="p-1 rounded text-white bg-zinc-800"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></button>
+             <button onclick="setViewport('tablet')" id="vp-tablet" class="p-1 rounded text-zinc-500 hover:text-white transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></button>
+             <button onclick="setViewport('mobile')" id="vp-mobile" class="p-1 rounded text-zinc-500 hover:text-white transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></button>
+         </div>
+         <button onclick="validatePage()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded transition font-medium">Validate</button>
+         <button class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded transition font-medium">Export</button>
+         <button class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded transition font-medium shadow-lg shadow-blue-500/20">Save Version</button>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <!-- LEFT: Component Library & Outline -->
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0">
+    <!-- Tabs -->
+    <div class="flex border-b border-zinc-800">
+        <button onclick="setLeftTab('outline')" id="lt-outline" class="flex-1 py-3 text-xs font-bold uppercase tracking-wider text-white border-b-2 border-blue-500">Outline</button>
+        <button onclick="setLeftTab('library')" id="lt-library" class="flex-1 py-3 text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-300">Library</button>
+    </div>
+    
+    <div id="panel-outline" class="flex-1 p-3 overflow-y-auto custom-scrollbar">
+        <div class="space-y-2">
+            <!-- Outline Items -->
+            <div onclick="selectComponent('comp-nav')" class="component-outline-item p-2 rounded border border-zinc-800 bg-zinc-900 cursor-pointer hover:border-zinc-600 transition flex justify-between items-center group">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    <span class="text-xs text-white">Navbar</span>
+                </div>
+                <div class="hidden group-hover:flex gap-1">
+                    <button class="text-zinc-500 hover:text-white"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg></button>
+                    <button class="text-zinc-500 hover:text-white"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+                </div>
+            </div>
+            
+            <div onclick="selectComponent('comp-hero')" id="outline-comp-hero" class="component-outline-item p-2 rounded border border-blue-500 bg-blue-500/10 cursor-pointer transition flex justify-between items-center group">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span class="text-xs text-blue-400 font-medium">Hero Section V2</span>
+                </div>
+            </div>
+            
+            <div onclick="selectComponent('comp-features')" class="component-outline-item p-2 rounded border border-zinc-800 bg-zinc-900 cursor-pointer hover:border-zinc-600 transition flex justify-between items-center group">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span class="text-xs text-white">Feature Grid</span>
+                </div>
+            </div>
+            
+            <div class="p-2 rounded border border-zinc-800 border-dashed bg-zinc-900/50 cursor-pointer hover:border-zinc-600 transition flex items-center justify-center text-zinc-500 hover:text-white">
+                <span class="text-[10px] font-bold uppercase tracking-wider">+ Add Section</span>
+            </div>
+        </div>
+    </div>
+    
+    <div id="panel-library" class="hidden flex-1 p-3 overflow-y-auto custom-scrollbar">
+        <input type="text" placeholder="Search components..." class="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-xs text-white mb-4 focus:outline-none focus:border-blue-500">
+        
+        <div class="space-y-4">
+            <div>
+                <h4 class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2">P16 Integrations</h4>
+                <div class="p-3 bg-zinc-900 border border-zinc-800 rounded cursor-grab hover:border-emerald-500/50 transition relative group">
+                    <div class="absolute top-1 right-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 block"></span></div>
+                    <div class="text-xs text-white font-medium mb-1">Embedded Assistant</div>
+                    <div class="text-[10px] text-zinc-500">Inject conversational UI bound to P16 profile.</div>
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2">Sections</h4>
+                <div class="space-y-2">
+                    <div class="p-3 bg-zinc-900 border border-zinc-800 rounded cursor-grab hover:border-zinc-600 transition">
+                        <div class="text-xs text-white font-medium mb-1">Hero Section V2</div>
+                        <div class="text-[10px] text-zinc-500">Standard responsive hero with media slot.</div>
+                    </div>
+                    <div class="p-3 bg-zinc-900 border border-zinc-800 rounded cursor-grab hover:border-zinc-600 transition">
+                        <div class="text-xs text-white font-medium mb-1">Pricing Table</div>
+                        <div class="text-[10px] text-zinc-500">3-column plan comparison.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </aside>
+
+  <!-- CENTER: Live Preview Area -->
+  <main class="flex-1 flex flex-col min-w-0 bg-black relative">
+      <!-- AI Generative Bar -->
+      <div class="absolute top-4 left-1/2 -translate-x-1/2 w-full max-w-lg z-20">
+          <div class="bg-zinc-900/95 backdrop-blur border border-zinc-700/50 rounded-full p-1.5 shadow-2xl flex items-center gap-2">
+              <svg class="w-5 h-5 text-blue-500 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              <input type="text" placeholder="e.g. Rewrite the hero headline to be more premium..." class="flex-1 bg-transparent border-0 text-white text-sm focus:ring-0 placeholder-zinc-500">
+              <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-full text-xs font-medium transition shadow-lg shadow-blue-500/20">Regenerate</button>
+          </div>
+      </div>
+      
+      <!-- Preview Frame Container -->
+      <div id="preview-container" class="flex-1 flex items-center justify-center p-4 transition-all duration-300">
+          <!-- The actual rendered page preview -->
+          <div id="preview-frame" class="w-full max-w-6xl h-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col relative ring-1 ring-zinc-800 transition-all duration-300">
+              <!-- Safe Schema-driven Preview Content (Mock) -->
+              
+              <!-- Navbar -->
+              <div class="h-16 border-b border-gray-100 flex items-center justify-between px-8 bg-white shrink-0">
+                  <div class="font-bold text-xl tracking-tight text-gray-900">QuantX AI</div>
+                  <div class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
+                      <span>Platform</span><span>Solutions</span><span>Pricing</span>
+                  </div>
+                  <div class="px-4 py-2 bg-gray-900 text-white rounded text-sm font-medium">Get Started</div>
+              </div>
+              
+              <!-- Hero (Selected) -->
+              <div class="relative bg-gray-50 border-2 border-blue-500 group overflow-hidden">
+                  <div class="absolute top-2 right-2 flex gap-1 z-10">
+                      <button class="bg-blue-500 text-white p-1.5 rounded shadow text-[10px] uppercase font-bold tracking-wider flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg> Edit</button>
+                  </div>
+                  
+                  <div class="max-w-4xl mx-auto px-8 py-24 text-center">
+                      <h1 class="text-5xl md:text-6xl font-bold text-gray-900 tracking-tight mb-6 leading-tight syne">
+                          Probability over Prediction.
+                      </h1>
+                      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                          Enterprise-grade market intelligence powered by structured reasoning.
+                      </p>
+                      
+                      <!-- P5 Asset Requirement Placeholder -->
+                      <div class="w-full max-w-3xl mx-auto aspect-video bg-gray-200 rounded-xl border border-gray-300 flex flex-col items-center justify-center text-gray-400 relative overflow-hidden group/media">
+                          <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                          <span class="text-sm font-medium">Hero Visual Required (16:9)</span>
+                          
+                          <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/media:opacity-100 transition backdrop-blur-sm">
+                              <button class="bg-white text-black px-4 py-2 rounded text-sm font-bold shadow-lg">Generate via P5 &rarr;</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+          </div>
+      </div>
+  </main>
+  
+  <!-- RIGHT: Properties Panel -->
+  <aside class="w-72 bg-[#121214] border-l border-zinc-800 flex flex-col shrink-0">
+     <div class="p-3 border-b border-zinc-800 flex items-center justify-between">
+         <span class="text-xs font-bold uppercase tracking-wider text-white">Hero Properties</span>
+         <button class="text-zinc-500 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+     </div>
+     
+     <div class="flex-1 p-4 overflow-y-auto custom-scrollbar space-y-6">
+         <!-- Content Data Binding -->
+         <div>
+             <div class="flex justify-between items-center mb-2">
+                 <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Headline</label>
+                 <span class="text-[10px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded">String</span>
+             </div>
+             <textarea rows="2" class="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 resize-none">Probability over Prediction.</textarea>
+             <div class="mt-1 flex justify-end"><button class="text-[10px] text-blue-400 hover:text-blue-300">Rewrite with AI</button></div>
+         </div>
+         
+         <div>
+             <div class="flex justify-between items-center mb-2">
+                 <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Subtitle</label>
+                 <span class="text-[10px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded">String</span>
+             </div>
+             <textarea rows="3" class="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 resize-none">Enterprise-grade market intelligence powered by structured reasoning.</textarea>
+         </div>
+         
+         <hr class="border-zinc-800">
+         
+         <!-- Media Requirement Config -->
+         <div>
+             <div class="flex justify-between items-center mb-2">
+                 <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Hero Media Asset</label>
+                 <span class="text-[10px] bg-amber-500/10 border border-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded">Missing</span>
+             </div>
+             <div class="bg-zinc-900 border border-zinc-800 rounded p-3 text-center">
+                 <p class="text-xs text-zinc-400 mb-3">No asset bound.</p>
+                 <div class="space-y-2">
+                     <button class="w-full bg-zinc-800 hover:bg-zinc-700 text-white py-1.5 rounded text-xs font-medium transition">Select from Library</button>
+                     <button class="w-full bg-blue-600 hover:bg-blue-500 text-white py-1.5 rounded text-xs font-medium transition shadow-lg shadow-blue-500/20">Generate Image (P5)</button>
+                 </div>
+             </div>
+         </div>
+         
+         <hr class="border-zinc-800">
+         
+         <!-- Styling/Layout Options -->
+         <div>
+             <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2 block">Layout Variant</label>
+             <select class="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                 <option>Centered Content</option>
+                 <option>Split (Left Text, Right Media)</option>
+                 <option>Full Background Image</option>
+             </select>
+         </div>
+         
+         <!-- Action Binding -->
+         <div>
+             <div class="flex justify-between items-center mb-2">
+                 <label class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Primary CTA Action</label>
+                 <span class="text-[10px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded">ActionRef</span>
+             </div>
+             <select class="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 mb-2">
+                 <option>Open URL / Navigate</option>
+                 <option>Scroll to Section</option>
+                 <option>Open Embedded Assistant (P16)</option>
+             </select>
+         </div>
+     </div>
+  </aside>
+</div>
+
+<!-- Validation Toast (Hidden by default) -->
+<div id="validation-toast" class="hidden absolute bottom-4 right-4 bg-zinc-900 border-l-4 border-amber-500 p-4 rounded shadow-2xl z-50 min-w-[300px]">
+    <div class="flex justify-between items-start mb-2">
+        <strong class="text-white text-sm">Validation Results</strong>
+        <button onclick="document.getElementById('validation-toast').classList.add('hidden')" class="text-zinc-500 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+    </div>
+    <ul class="text-xs space-y-1 text-zinc-400">
+        <li class="flex gap-2 items-start"><span class="text-amber-500">!</span> Hero media asset is required but missing.</li>
+        <li class="flex gap-2 items-start"><span class="text-zinc-500">✓</span> No unsafe URL schemes detected.</li>
+        <li class="flex gap-2 items-start"><span class="text-zinc-500">✓</span> Component schemas valid.</li>
+    </ul>
+</div>
+
+<script>
+  function setViewport(vp) {
+      ['desktop', 'tablet', 'mobile'].forEach(v => {
+          const btn = document.getElementById('vp-' + v);
+          btn.classList.remove('bg-zinc-800', 'text-white');
+          btn.classList.add('text-zinc-500');
+      });
+      const btn = document.getElementById('vp-' + vp);
+      btn.classList.add('bg-zinc-800', 'text-white');
+      btn.classList.remove('text-zinc-500');
+      
+      const frame = document.getElementById('preview-frame');
+      if (vp === 'desktop') frame.className = 'w-full max-w-6xl h-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col relative ring-1 ring-zinc-800 transition-all duration-300';
+      if (vp === 'tablet') frame.className = 'w-full max-w-3xl h-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col relative ring-1 ring-zinc-800 transition-all duration-300 mx-auto';
+      if (vp === 'mobile') frame.className = 'w-full max-w-sm h-full bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col relative ring-4 ring-zinc-800 transition-all duration-300 mx-auto my-4';
+  }
+
+  function setLeftTab(tab) {
+      document.getElementById('lt-outline').className = 'flex-1 py-3 text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-300';
+      document.getElementById('lt-library').className = 'flex-1 py-3 text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-300';
+      
+      const activeBtn = document.getElementById('lt-' + tab);
+      activeBtn.className = 'flex-1 py-3 text-xs font-bold uppercase tracking-wider text-white border-b-2 border-blue-500';
+      
+      document.getElementById('panel-outline').classList.add('hidden');
+      document.getElementById('panel-library').classList.add('hidden');
+      document.getElementById('panel-' + tab).classList.remove('hidden');
+  }
+
+  function selectComponent(id) {
+      // Basic mock highlighting logic
+  }
+
+  function validatePage() {
+      document.getElementById('validation-toast').classList.remove('hidden');
+  }
+</script>
+</body>
+</html>

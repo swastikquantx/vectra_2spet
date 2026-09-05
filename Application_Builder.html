@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Application Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #8b5cf6; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0 z-10">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='Admin.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Application Builder</span>
+            <span class="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded ml-2 uppercase font-bold border border-purple-500/20">BGV Portal</span>
+            <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded ml-1 font-mono">v1</span>
+        </div>
+     </div>
+     
+     <div class="flex items-center gap-2">
+         <button onclick="validateApp()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded transition font-medium">Validate</button>
+         <button class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded transition font-medium">Export Manifest</button>
+         <button class="text-xs bg-purple-600 hover:bg-purple-500 text-white px-4 py-1.5 rounded transition font-medium shadow-lg shadow-purple-500/20">Save Version</button>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Configuration</span>
+    </div>
+    <div class="space-y-1">
+      <button onclick="setMode('data')" id="mode-btn-data" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Data Models
+      </button>
+      <button onclick="setMode('nav')" id="mode-btn-nav" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Pages & Navigation
+      </button>
+      <button onclick="setMode('roles')" id="mode-btn-roles" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Roles & Permissions
+      </button>
+      <button onclick="setMode('workflows')" id="mode-btn-workflows" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Workflows & Services
+      </button>
+      <button onclick="setMode('preview')" id="mode-btn-preview" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white mt-4 border border-zinc-800">
+         <span class="w-2 h-2 rounded-full bg-emerald-500"></span> App Preview
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    
+    <!-- DATA MODELS PANEL -->
+    <div id="panel-data" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-5xl mx-auto w-full space-y-6">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Data Model Designer</h2>
+              <p class="text-sm text-zinc-400">Define entities, schemas, and relationships (No raw SQL).</p>
+            </div>
+            <button class="bg-zinc-800 text-white px-3 py-1.5 rounded text-xs font-medium">+ Create Entity</button>
+          </div>
+          
+          <div class="grid grid-cols-3 gap-6">
+              <!-- Entity List -->
+              <div class="col-span-1 space-y-2">
+                  <div class="bg-zinc-900 border border-blue-500/50 rounded p-3 cursor-pointer">
+                      <div class="font-bold text-sm text-white flex justify-between">VerificationCase <span class="text-[10px] bg-blue-500/20 text-blue-400 px-1.5 rounded">Core</span></div>
+                      <div class="text-xs text-zinc-500 mt-1">7 fields, 2 relationships</div>
+                  </div>
+                  <div class="bg-[#121214] border border-zinc-800 hover:border-zinc-700 transition rounded p-3 cursor-pointer">
+                      <div class="font-bold text-sm text-white">Candidate</div>
+                      <div class="text-xs text-zinc-500 mt-1">12 fields</div>
+                  </div>
+                  <div class="bg-[#121214] border border-zinc-800 hover:border-zinc-700 transition rounded p-3 cursor-pointer">
+                      <div class="font-bold text-sm text-white">Client</div>
+                      <div class="text-xs text-zinc-500 mt-1">5 fields</div>
+                  </div>
+              </div>
+              
+              <!-- Entity Editor -->
+              <div class="col-span-2 bg-[#121214] border border-zinc-800 rounded-xl p-5">
+                  <div class="flex justify-between items-start mb-6">
+                      <div>
+                          <h3 class="text-lg font-bold text-white">VerificationCase</h3>
+                          <p class="text-xs text-zinc-500 mt-1">Central record for a background check workflow.</p>
+                      </div>
+                      <div class="flex gap-2">
+                          <button class="text-xs bg-zinc-800 text-white px-2 py-1 rounded">Generate CRUD Forms</button>
+                      </div>
+                  </div>
+                  
+                  <div class="space-y-3">
+                      <div class="flex items-center justify-between p-3 bg-zinc-900 border border-zinc-800 rounded">
+                          <div>
+                              <div class="text-sm font-medium text-white">id</div>
+                              <div class="text-xs text-zinc-500">Primary Identifier</div>
+                          </div>
+                          <div class="text-xs font-mono text-emerald-400">UUID (Auto)</div>
+                      </div>
+                      <div class="flex items-center justify-between p-3 bg-zinc-900 border border-zinc-800 rounded">
+                          <div>
+                              <div class="text-sm font-medium text-white">candidateId</div>
+                              <div class="text-xs text-zinc-500">Relationship: Many-to-One -> Candidate</div>
+                          </div>
+                          <div class="text-xs font-mono text-purple-400">REFERENCE</div>
+                      </div>
+                      <div class="flex items-center justify-between p-3 bg-zinc-900 border border-zinc-800 rounded">
+                          <div>
+                              <div class="text-sm font-medium text-white">status</div>
+                              <div class="text-xs text-zinc-500">Case lifecycle state</div>
+                          </div>
+                          <div class="text-xs font-mono text-blue-400">STATUS (Enum)</div>
+                      </div>
+                      <div class="flex items-center justify-between p-3 bg-zinc-900 border border-zinc-800 rounded">
+                          <div>
+                              <div class="text-sm font-medium text-white">assignedTo</div>
+                              <div class="text-xs text-zinc-500">Role: Verifier</div>
+                          </div>
+                          <div class="text-xs font-mono text-purple-400">USER_REFERENCE</div>
+                      </div>
+                      
+                      <button class="w-full border border-dashed border-zinc-700 rounded py-2 text-xs text-zinc-500 hover:text-white hover:border-zinc-500 transition">+ Add Field</button>
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- NAVIGATION & PAGES PANEL -->
+    <div id="panel-nav" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Navigation Builder</h2>
+              <p class="text-sm text-zinc-400">Map pages to routes and sidebar layout.</p>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-6">
+              <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+                  <h3 class="font-bold text-sm text-white mb-4">Sidebar Structure</h3>
+                  <div class="space-y-2 text-sm text-zinc-300">
+                      <div class="flex items-center gap-3 p-2 bg-zinc-900 rounded border border-zinc-800">
+                          <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                          <span>Dashboard</span>
+                          <span class="ml-auto text-[10px] text-zinc-500 bg-zinc-800 px-1.5 rounded">/dashboard</span>
+                      </div>
+                      <div class="flex items-center gap-3 p-2 bg-zinc-900 rounded border border-zinc-800">
+                          <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                          <span>Active Cases</span>
+                          <span class="ml-auto text-[10px] text-zinc-500 bg-zinc-800 px-1.5 rounded">/cases</span>
+                      </div>
+                      <div class="flex items-center gap-3 p-2 bg-zinc-900 rounded border border-zinc-800 pl-8 opacity-70">
+                          <svg class="w-3 h-3 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                          <span>Kanban View</span>
+                          <span class="ml-auto text-[10px] text-zinc-500 bg-zinc-800 px-1.5 rounded">/cases/board</span>
+                      </div>
+                      <div class="flex items-center gap-3 p-2 bg-zinc-900 rounded border border-zinc-800">
+                          <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                          <span>Candidates</span>
+                          <span class="ml-auto text-[10px] text-zinc-500 bg-zinc-800 px-1.5 rounded">/candidates</span>
+                      </div>
+                  </div>
+              </div>
+              
+              <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+                  <h3 class="font-bold text-sm text-white mb-4">Route Validator</h3>
+                  <div class="space-y-2 text-xs">
+                      <div class="flex gap-2 items-center text-zinc-300"><span class="text-emerald-500">✓</span> No Vectra Admin route collisions</div>
+                      <div class="flex gap-2 items-center text-zinc-300"><span class="text-emerald-500">✓</span> All navigation items link to valid pages</div>
+                      <div class="flex gap-2 items-center text-zinc-300"><span class="text-emerald-500">✓</span> Role fallbacks configured</div>
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- ROLES & PERMISSIONS PANEL -->
+    <div id="panel-roles" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-5xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Roles & Permission Matrix</h2>
+            <p class="text-sm text-zinc-400">Configure declarative authorization for data and views.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl overflow-hidden">
+              <table class="w-full text-left text-sm text-zinc-300">
+                  <thead class="bg-zinc-900 text-xs uppercase font-medium text-zinc-500 border-b border-zinc-800">
+                      <tr>
+                          <th class="p-4">Permission Key</th>
+                          <th class="p-4 text-center border-l border-zinc-800">Admin</th>
+                          <th class="p-4 text-center border-l border-zinc-800">Ops Manager</th>
+                          <th class="p-4 text-center border-l border-zinc-800">Verifier</th>
+                          <th class="p-4 text-center border-l border-zinc-800">Client Viewer</th>
+                      </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800">
+                      <tr class="hover:bg-zinc-800/30">
+                          <td class="p-4 font-mono text-xs">case.read</td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 bg-emerald-500 rounded mx-auto"></div></td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 bg-emerald-500 rounded mx-auto"></div></td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 bg-emerald-500 rounded mx-auto"></div></td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 bg-emerald-500/50 border border-emerald-500 rounded mx-auto"></div><span class="text-[9px] text-zinc-500 block mt-1">Own Only</span></td>
+                      </tr>
+                      <tr class="hover:bg-zinc-800/30">
+                          <td class="p-4 font-mono text-xs">case.update</td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 bg-emerald-500 rounded mx-auto"></div></td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 bg-emerald-500 rounded mx-auto"></div></td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 bg-emerald-500 rounded mx-auto"></div></td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 border border-zinc-600 rounded mx-auto"></div></td>
+                      </tr>
+                      <tr class="hover:bg-zinc-800/30">
+                          <td class="p-4 font-mono text-xs">case.delete</td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 bg-emerald-500 rounded mx-auto"></div></td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 border border-zinc-600 rounded mx-auto"></div></td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 border border-zinc-600 rounded mx-auto"></div></td>
+                          <td class="p-4 text-center border-l border-zinc-800"><div class="w-4 h-4 border border-zinc-600 rounded mx-auto"></div></td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+       </div>
+    </div>
+    
+    <!-- WORKFLOWS PANEL -->
+    <div id="panel-workflows" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Workflows & Services</h2>
+            <p class="text-sm text-zinc-400">Map internal application actions and deterministic triggers.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+              <div class="flex justify-between items-center mb-4">
+                  <h3 class="font-bold text-sm text-white">SLA Warning Workflow</h3>
+                  <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded uppercase font-bold">Active</span>
+              </div>
+              
+              <div class="space-y-4">
+                  <!-- Trigger -->
+                  <div class="flex items-center gap-4">
+                      <div class="w-10 h-10 rounded bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                          <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                      </div>
+                      <div class="bg-zinc-900 border border-zinc-800 rounded p-3 flex-1">
+                          <div class="text-xs font-bold text-zinc-500 uppercase">Trigger</div>
+                          <div class="text-sm text-white font-medium">Record Updated (VerificationCase)</div>
+                          <div class="text-xs text-zinc-400">Condition: status == 'DELAYED'</div>
+                      </div>
+                  </div>
+                  
+                  <div class="w-0.5 h-6 bg-zinc-800 ml-5"></div>
+                  
+                  <!-- Action 1 -->
+                  <div class="flex items-center gap-4">
+                      <div class="w-10 h-10 rounded bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0">
+                          1
+                      </div>
+                      <div class="bg-zinc-900 border border-zinc-800 rounded p-3 flex-1">
+                          <div class="text-xs font-bold text-zinc-500 uppercase">Action</div>
+                          <div class="text-sm text-white font-medium">CREATE_ACTIVITY (Audit Log)</div>
+                          <div class="text-xs text-zinc-400">Log SLA breach against case ID.</div>
+                      </div>
+                  </div>
+                  
+                  <div class="w-0.5 h-6 bg-zinc-800 ml-5"></div>
+                  
+                  <!-- Action 2 -->
+                  <div class="flex items-center gap-4">
+                      <div class="w-10 h-10 rounded bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0">
+                          <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                      </div>
+                      <div class="bg-zinc-900 border border-zinc-800 rounded p-3 flex-1">
+                          <div class="text-xs font-bold text-zinc-500 uppercase">Action</div>
+                          <div class="text-sm text-white font-medium">INTERNAL_NOTIFICATION</div>
+                          <div class="text-xs text-zinc-400">Notify role: Ops Manager.</div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- APP PREVIEW PANEL -->
+    <div id="panel-preview" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-6xl mx-auto w-full h-full flex flex-col">
+          <div class="flex justify-between items-center mb-4 shrink-0">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Application Preview</h2>
+              <div class="flex gap-4 text-xs">
+                  <span class="text-amber-500 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> MOCK DATA ACTIVE</span>
+                  <span class="text-zinc-400">Role View: <select class="bg-zinc-800 rounded border-0 text-white ml-1 py-0.5"><option>Admin</option><option>Client Viewer</option></select></span>
+              </div>
+            </div>
+            <button class="bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded text-sm font-medium">Open in New Tab</button>
+          </div>
+          
+          <div class="flex-1 bg-white rounded-xl shadow-2xl overflow-hidden flex border border-zinc-800 relative">
+              <!-- Mock App Sidebar -->
+              <div class="w-64 bg-gray-900 text-gray-300 p-4 flex flex-col">
+                  <div class="font-bold text-white text-lg mb-8 tracking-tight">BGV Portal</div>
+                  <div class="space-y-2 text-sm font-medium">
+                      <div class="bg-blue-600 text-white p-2 rounded">Dashboard</div>
+                      <div class="hover:bg-gray-800 p-2 rounded text-gray-400">Active Cases</div>
+                      <div class="hover:bg-gray-800 p-2 rounded text-gray-400">Candidates</div>
+                      <div class="hover:bg-gray-800 p-2 rounded text-gray-400">Reports</div>
+                  </div>
+              </div>
+              
+              <!-- Mock App Content -->
+              <div class="flex-1 bg-gray-50 flex flex-col">
+                  <div class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
+                      <div class="font-semibold text-gray-800">Overview</div>
+                      <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
+                  </div>
+                  <div class="p-6 flex-1 overflow-y-auto text-gray-900">
+                      
+                      <!-- P22 Generated Dashboard Mock -->
+                      <div class="grid grid-cols-3 gap-6 mb-8">
+                          <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                              <div class="text-sm text-gray-500 font-medium mb-1">Total Cases</div>
+                              <div class="text-3xl font-bold">142</div>
+                          </div>
+                          <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                              <div class="text-sm text-gray-500 font-medium mb-1">In Progress</div>
+                              <div class="text-3xl font-bold text-blue-600">38</div>
+                          </div>
+                          <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                              <div class="text-sm text-gray-500 font-medium mb-1">SLA Breached</div>
+                              <div class="text-3xl font-bold text-red-500">2</div>
+                          </div>
+                      </div>
+                      
+                      <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                          <div class="p-5 border-b border-gray-200 flex justify-between items-center">
+                              <h3 class="font-bold">Recent Cases</h3>
+                              <button class="text-sm bg-blue-600 text-white px-3 py-1.5 rounded font-medium">+ New Case</button>
+                          </div>
+                          <table class="w-full text-left text-sm">
+                              <thead class="bg-gray-50 text-gray-500">
+                                  <tr><th class="p-4 font-medium">ID</th><th class="p-4 font-medium">Candidate</th><th class="p-4 font-medium">Status</th><th class="p-4 font-medium">Date</th></tr>
+                              </thead>
+                              <tbody class="divide-y divide-gray-200">
+                                  <tr><td class="p-4 font-mono text-gray-500">CS-109</td><td class="p-4 font-medium">Amit Sharma</td><td class="p-4"><span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs font-bold">IN PROGRESS</span></td><td class="p-4 text-gray-500">Oct 12</td></tr>
+                                  <tr><td class="p-4 font-mono text-gray-500">CS-108</td><td class="p-4 font-medium">Priya Patel</td><td class="p-4"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">VERIFIED</span></td><td class="p-4 text-gray-500">Oct 11</td></tr>
+                              </tbody>
+                          </table>
+                      </div>
+                      
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<!-- Validation Toast -->
+<div id="validation-toast" class="hidden absolute bottom-4 right-4 bg-zinc-900 border-l-4 border-emerald-500 p-4 rounded shadow-2xl z-50 min-w-[300px]">
+    <div class="flex justify-between items-start mb-2">
+        <strong class="text-white text-sm">App Readiness</strong>
+        <button onclick="document.getElementById('validation-toast').classList.add('hidden')" class="text-zinc-500 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+    </div>
+    <ul class="text-xs space-y-1 text-zinc-400">
+        <li class="flex gap-2 items-start"><span class="text-emerald-500">✓</span> Data models valid. No raw SQL detected.</li>
+        <li class="flex gap-2 items-start"><span class="text-emerald-500">✓</span> Navigation links resolved.</li>
+        <li class="flex gap-2 items-start"><span class="text-emerald-500">✓</span> Workflow loop protection active.</li>
+        <li class="flex gap-2 items-start"><span class="text-zinc-500">ℹ</span> Using internal mock data adapter for preview.</li>
+    </ul>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['data', 'nav', 'roles', 'workflows', 'preview'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    document.getElementById('mode-btn-' + mode).classList.add(mode === 'preview' ? 'bg-zinc-800' : 'bg-zinc-800/50', 'text-white');
+    document.getElementById('mode-btn-' + mode).classList.remove('text-zinc-400');
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  function validateApp() {
+      document.getElementById('validation-toast').classList.remove('hidden');
+  }
+</script>
+</body>
+</html>

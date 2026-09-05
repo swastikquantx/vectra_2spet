@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Creator Studio Blueprint</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #f43f5e; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='Admin.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Creator Studio Foundation (Admin)</span>
+            <span class="text-[10px] bg-rose-500/10 text-rose-500 px-2 py-0.5 rounded ml-2 uppercase font-bold border border-rose-500/20">Protected</span>
+        </div>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Project Creation</span>
+    </div>
+    <div class="space-y-1">
+      <button onclick="setMode('prompt')" id="mode-btn-prompt" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Prompt to Blueprint
+      </button>
+      <button onclick="setMode('blueprint')" id="mode-btn-blueprint" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Blueprint Review
+      </button>
+      <button onclick="setMode('registry')" id="mode-btn-registry" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Registries & Dependencies
+      </button>
+      <button onclick="setMode('plan')" id="mode-btn-plan" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Build Plan
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    
+    <!-- PROMPT PANEL -->
+    <div id="panel-prompt" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-3xl mx-auto w-full space-y-6">
+          <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-white mb-2 syne">Describe Your Project</h2>
+            <p class="text-sm text-zinc-400">Generate a structured, safe blueprint before building.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6 shadow-2xl relative group">
+              <div class="absolute -inset-0.5 bg-gradient-to-r from-rose-500 to-orange-500 rounded-xl blur opacity-20 group-hover:opacity-30 transition duration-1000 group-hover:duration-200"></div>
+              <div class="relative bg-zinc-900 rounded-lg p-1">
+                  <textarea rows="4" class="w-full bg-transparent border-0 text-white text-sm p-4 focus:ring-0 resize-none custom-scrollbar placeholder-zinc-600" placeholder="e.g. Create a landing page for QuantX AI with pricing, free trial CTA, market-intelligence sections, and an embedded customer support assistant."></textarea>
+                  <div class="flex justify-between items-center p-3 border-t border-zinc-800">
+                      <div class="flex gap-2">
+                          <button class="text-xs bg-zinc-800 text-zinc-400 hover:text-white px-2 py-1 rounded">Landing Page</button>
+                          <button class="text-xs bg-zinc-800 text-zinc-400 hover:text-white px-2 py-1 rounded">Dashboard</button>
+                      </div>
+                      <button onclick="generateBlueprint()" id="btn-generate" class="bg-rose-600 hover:bg-rose-500 text-white px-6 py-2 rounded font-medium text-sm transition-colors shadow-lg shadow-rose-500/20">Generate Blueprint</button>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4 mt-8 opacity-60">
+              <div class="border border-zinc-800 rounded p-4 text-xs text-zinc-400">
+                  <strong class="text-zinc-300 block mb-1">What happens next?</strong>
+                  Vectra evaluates requirements, maps components, discovers AI capabilities via the P19 Control Plane, and drafts an editable architecture document.
+              </div>
+              <div class="border border-zinc-800 rounded p-4 text-xs text-zinc-400">
+                  <strong class="text-zinc-300 block mb-1">Safe Composition</strong>
+                  No code is executed. P20 creates definitions. P21 will render the structure.
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- BLUEPRINT PANEL -->
+    <div id="panel-blueprint" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="flex items-center gap-3 mb-2">
+                  <h2 class="text-xl font-bold text-white">Project Blueprint: QuantX Landing</h2>
+                  <span class="text-[10px] bg-zinc-800 text-zinc-300 px-2 py-1 rounded font-mono">v1 DRAFT</span>
+              </div>
+              <p class="text-sm text-zinc-400">Review structure, edit sections, and approve.</p>
+            </div>
+            <div class="flex gap-2">
+                <button class="bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded text-sm font-medium">Export Manifest</button>
+                <button onclick="setMode('plan')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded text-sm font-medium">Approve Blueprint</button>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-3 gap-6">
+              <div class="col-span-2 space-y-6">
+                  <!-- Pages & Components -->
+                  <div class="bg-[#121214] border border-zinc-800 rounded-xl overflow-hidden">
+                      <div class="bg-zinc-900/80 px-4 py-3 border-b border-zinc-800 flex justify-between items-center">
+                          <h3 class="font-bold text-sm text-white">Pages & Structure</h3>
+                          <button class="text-xs text-rose-400 hover:text-rose-300">Edit / Regenerate</button>
+                      </div>
+                      <div class="p-4 space-y-4">
+                          <div class="border border-zinc-800 rounded p-3 bg-zinc-900">
+                              <div class="flex justify-between mb-2"><strong class="text-sm text-white">/home (Landing)</strong><span class="text-xs text-zinc-500">Public</span></div>
+                              <div class="flex flex-wrap gap-2 text-xs">
+                                  <span class="bg-zinc-800 px-2 py-1 rounded text-zinc-300">Navbar</span>
+                                  <span class="bg-zinc-800 px-2 py-1 rounded text-zinc-300">Hero Section</span>
+                                  <span class="bg-zinc-800 px-2 py-1 rounded text-zinc-300">Feature Grid</span>
+                                  <span class="bg-zinc-800 px-2 py-1 rounded text-zinc-300">Pricing Table</span>
+                                  <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-1 rounded">AI Assistant (P16)</span>
+                                  <span class="bg-zinc-800 px-2 py-1 rounded text-zinc-300">Footer</span>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <!-- Capabilities & Tools -->
+                  <div class="bg-[#121214] border border-zinc-800 rounded-xl overflow-hidden">
+                      <div class="bg-zinc-900/80 px-4 py-3 border-b border-zinc-800 flex justify-between items-center">
+                          <h3 class="font-bold text-sm text-white">AI Capabilities Required</h3>
+                      </div>
+                      <div class="p-4 space-y-2">
+                          <div class="flex items-center justify-between p-2 bg-zinc-900 border border-zinc-800 rounded">
+                              <span class="text-sm text-white">Chat / Support Agent</span>
+                              <span class="text-xs text-emerald-400 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Available (P19 Route)</span>
+                          </div>
+                          <div class="flex items-center justify-between p-2 bg-zinc-900 border border-zinc-800 rounded">
+                              <span class="text-sm text-white">Image Generation (Hero Visual)</span>
+                              <span class="text-xs text-emerald-400 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Available (P5 Tools)</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              <div class="space-y-6">
+                  <!-- Assets -->
+                  <div class="bg-[#121214] border border-zinc-800 rounded-xl p-4">
+                      <h3 class="font-bold text-sm text-white mb-3">Asset Requirements</h3>
+                      <ul class="text-xs space-y-2 text-zinc-400">
+                          <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Missing: Hero Background (16:9)</li>
+                          <li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Available: Brand Logo</li>
+                          <li class="mt-3"><button class="text-rose-400 hover:text-rose-300">Generate Missing via P5 &rarr;</button></li>
+                      </ul>
+                  </div>
+                  
+                  <!-- Diagnostics -->
+                  <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4">
+                      <h3 class="font-bold text-sm text-emerald-400 mb-2">Project Readiness</h3>
+                      <div class="text-xs text-zinc-300 space-y-1">
+                          <p>✓ No route collisions detected</p>
+                          <p>✓ Components exist in registry</p>
+                          <p>✓ Required capabilities available</p>
+                          <p class="text-amber-500 mt-2">! Missing 1 visual asset</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- REGISTRY PANEL -->
+    <div id="panel-registry" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Component & Page Registry</h2>
+            <p class="text-sm text-zinc-400">Reusable schema definitions powering project blueprints.</p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+              <!-- Reusable Component -->
+              <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                  <div class="flex justify-between items-start mb-3">
+                      <div>
+                          <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-1 rounded uppercase font-bold">COMPONENT SCHEMA</span>
+                          <h3 class="text-white font-bold mt-2">Hero Section V2</h3>
+                      </div>
+                      <span class="text-xs text-zinc-500">v1.2.0</span>
+                  </div>
+                  <div class="text-xs text-zinc-400 font-mono bg-[#121214] p-3 rounded border border-zinc-800">
+                      props: {<br>
+                      &nbsp;&nbsp;title: "string",<br>
+                      &nbsp;&nbsp;subtitle: "string",<br>
+                      &nbsp;&nbsp;ctaAction: "ActionRef",<br>
+                      &nbsp;&nbsp;brandAware: true<br>
+                      }
+                  </div>
+              </div>
+              
+              <!-- P16 Reuse -->
+              <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                  <div class="flex justify-between items-start mb-3">
+                      <div>
+                          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-1 rounded uppercase font-bold">P16 INTEGRATION</span>
+                          <h3 class="text-white font-bold mt-2">Embedded Assistant</h3>
+                      </div>
+                      <span class="text-xs text-zinc-500">v1.0.0</span>
+                  </div>
+                  <div class="text-xs text-zinc-400 bg-[#121214] p-3 rounded border border-zinc-800">
+                      Reusable conversational component inheriting P16 AssistantProfile configuration.
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- BUILD PLAN PANEL -->
+    <div id="panel-plan" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div class="text-center max-w-lg mx-auto mt-10">
+              <div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
+                  <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              </div>
+              <h2 class="text-xl font-bold text-white mb-2">Blueprint Approved</h2>
+              <p class="text-sm text-zinc-400 mb-6">Build Plan v1 generated. No autonomous execution started. Foundation is ready for P21 visual composition and page rendering.</p>
+              
+              <div class="bg-[#121214] border border-zinc-800 rounded text-left p-4 space-y-2 text-sm text-zinc-300">
+                  <div class="flex items-center gap-2"><span class="text-zinc-500">[PENDING]</span> Create /home</div>
+                  <div class="flex items-center gap-2"><span class="text-zinc-500">[PENDING]</span> Bind Hero component schema</div>
+                  <div class="flex items-center gap-2"><span class="text-zinc-500">[PENDING]</span> Link P16 Assistant Profile</div>
+                  <div class="flex items-center gap-2"><span class="text-zinc-500">[BLOCKED]</span> Require missing Hero Asset</div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['prompt', 'blueprint', 'registry', 'plan'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    document.getElementById('mode-btn-' + mode).classList.add('bg-zinc-800/50', 'text-white');
+    document.getElementById('mode-btn-' + mode).classList.remove('text-zinc-400');
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  function generateBlueprint() {
+      const btn = document.getElementById('btn-generate');
+      btn.innerHTML = `<div class="spinner inline-block align-middle mr-2"></div> Generating Blueprint...`;
+      btn.disabled = true;
+      
+      setTimeout(() => {
+          setMode('blueprint');
+          btn.innerHTML = 'Generate Blueprint';
+          btn.disabled = false;
+      }, 1500);
+  }
+</script>
+</body>
+</html>

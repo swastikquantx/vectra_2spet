@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Avatar Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #ec4899; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='User_Dashboard.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Avatar & Presenter Studio</span>
+        </div>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Creation Steps</span>
+    </div>
+    <div class="space-y-1">
+      <button onclick="setMode('presenter')" id="mode-btn-presenter" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Presenter
+      </button>
+      <button onclick="setMode('script')" id="mode-btn-script" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Script & Voice
+      </button>
+      <button onclick="setMode('scene')" id="mode-btn-scene" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Scene & Layout
+      </button>
+      <button onclick="setMode('generate')" id="mode-btn-generate" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Generate
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    <!-- PRESENTER PANEL -->
+    <div id="panel-presenter" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Select Presenter</h2>
+            <p class="text-sm text-zinc-400">Choose a system AI avatar or authorize a custom presenter.</p>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="bg-zinc-900 border-2 border-pink-500 rounded-xl p-3 cursor-pointer relative overflow-hidden">
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 flex flex-col justify-end p-3">
+                      <span class="text-xs font-bold text-white">System: Emma</span>
+                      <span class="text-[10px] text-zinc-300">Professional</span>
+                  </div>
+                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&h=500&fit=crop" class="w-full aspect-square object-cover rounded-lg opacity-80" alt="Avatar">
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-xl p-3 cursor-pointer relative overflow-hidden transition-colors">
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 flex flex-col justify-end p-3">
+                      <span class="text-xs font-bold text-white">System: Marcus</span>
+                      <span class="text-[10px] text-zinc-300">News Anchor</span>
+                  </div>
+                  <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&h=500&fit=crop" class="w-full aspect-square object-cover rounded-lg opacity-80" alt="Avatar">
+              </div>
+              
+              <div class="bg-zinc-900/50 border-2 border-dashed border-zinc-800 hover:border-pink-500/50 rounded-xl p-3 cursor-pointer flex flex-col items-center justify-center text-center transition-colors">
+                  <svg class="w-8 h-8 text-zinc-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                  <span class="text-xs font-medium text-zinc-400">Custom Presenter</span>
+              </div>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-lg p-5">
+              <h3 class="text-white text-sm font-semibold mb-3">Custom Presenter Authorization</h3>
+              <div class="flex gap-3 items-start">
+                  <input type="checkbox" id="consent-check" class="mt-1 bg-zinc-900 border-zinc-700 rounded text-pink-600 focus:ring-pink-500 focus:ring-offset-zinc-900">
+                  <label for="consent-check" class="text-xs text-zinc-300 leading-relaxed">
+                      <strong>Required:</strong> I confirm that I have explicit authorization to use this person's likeness for video generation. I understand that creating deceptive or unauthorized synthetic media is strictly prohibited.
+                  </label>
+              </div>
+          </div>
+          
+          <button onclick="nextStep('script')" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-medium mt-4">Continue</button>
+       </div>
+    </div>
+    
+    <!-- SCRIPT & VOICE PANEL -->
+    <div id="panel-script" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Script & Voice</h2>
+            <p class="text-sm text-zinc-400">Enter the dialogue and select an authorized voice profile.</p>
+          </div>
+          
+          <div class="space-y-4">
+              <div class="bg-[#121214] border border-zinc-800 rounded p-5">
+                  <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-2">Script Text</label>
+                  <textarea rows="6" class="w-full bg-zinc-900 border border-zinc-700 rounded text-sm text-zinc-300 p-3 focus:outline-none focus:border-pink-500 custom-scrollbar" placeholder="Enter script here..."></textarea>
+              </div>
+              
+              <div class="bg-[#121214] border border-zinc-800 rounded p-5">
+                  <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-2">Voice Profile</label>
+                  <select class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none mb-4">
+                      <option>System: Emma (English, Professional)</option>
+                      <option>Custom Profile: Founder Voice (Authorized)</option>
+                  </select>
+              </div>
+              
+              <button onclick="nextStep('scene')" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-medium w-full">Continue</button>
+          </div>
+       </div>
+    </div>
+    
+    <!-- SCENE & LAYOUT PANEL -->
+    <div id="panel-scene" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Scene & Layout</h2>
+            <p class="text-sm text-zinc-400">Configure background and framing for the presenter.</p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-6">
+              <div class="bg-[#121214] border border-zinc-800 rounded p-5 space-y-4">
+                  <div>
+                      <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-2">Background Type</label>
+                      <select class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none">
+                          <option>Solid Color (Green Screen)</option>
+                          <option>Transparent (Alpha Channel)</option>
+                          <option>Studio Preset</option>
+                          <option>Custom Image (P5 Asset)</option>
+                      </select>
+                  </div>
+                  <div>
+                      <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-2">Layout Framing</label>
+                      <select class="w-full bg-[#18181b] border border-zinc-700 rounded text-sm text-zinc-300 p-2 focus:outline-none">
+                          <option>Center (Waist Up)</option>
+                          <option>Right Third (News Style)</option>
+                          <option>Lower Corner (PiP)</option>
+                      </select>
+                  </div>
+              </div>
+              
+              <div class="bg-[#121214] border border-zinc-800 rounded p-5 flex flex-col items-center justify-center text-center">
+                  <div class="w-full aspect-video bg-zinc-900 border border-zinc-700 rounded flex items-center justify-center mb-3">
+                      <span class="text-xs text-zinc-500">Layout Preview</span>
+                  </div>
+                  <span class="text-[10px] text-zinc-500">Actual background depends on render engine</span>
+              </div>
+          </div>
+          <button onclick="nextStep('generate')" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-medium w-full">Continue</button>
+       </div>
+    </div>
+    
+    <!-- GENERATE PANEL -->
+    <div id="panel-generate" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Generate Video</h2>
+            <p class="text-sm text-zinc-400">Review settings and submit generation job.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6">
+             <div class="space-y-2 mb-6 text-sm text-zinc-300">
+                 <div class="flex justify-between"><span class="text-zinc-500">Presenter:</span> <span>System: Emma</span></div>
+                 <div class="flex justify-between"><span class="text-zinc-500">Voice:</span> <span>System: Emma</span></div>
+                 <div class="flex justify-between"><span class="text-zinc-500">Layout:</span> <span>Center (Waist Up)</span></div>
+                 <div class="flex justify-between"><span class="text-zinc-500">Cost Category:</span> <span class="text-emerald-400 font-bold">FREE_TIER</span></div>
+             </div>
+             
+             <button onclick="generateVideo()" id="btn-generate-video" class="w-full bg-pink-600 hover:bg-pink-500 text-white py-3 rounded-lg font-bold transition-all shadow-lg shadow-pink-500/20">
+                 Generate Presenter Video
+             </button>
+             <p id="generate-result" class="hidden text-sm text-zinc-300 mt-4 text-center">Video generation queued! (Mock)</p>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['presenter', 'script', 'scene', 'generate'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    document.getElementById('mode-btn-' + mode).classList.add('bg-zinc-800/50', 'text-white');
+    document.getElementById('mode-btn-' + mode).classList.remove('text-zinc-400');
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  function nextStep(step) {
+      setMode(step);
+  }
+
+  async function generateVideo() {
+      const btn = document.getElementById('btn-generate-video');
+      btn.innerHTML = `<div class="spinner border-t-white border-l-white inline-block align-middle mr-2"></div> Processing...`;
+      btn.disabled = true;
+      
+      try {
+          const res = await fetch('/api/avatar/generate', { method: 'POST' });
+          const data = await res.json();
+          document.getElementById('generate-result').classList.remove('hidden');
+          btn.innerHTML = 'Generation Queued';
+          btn.classList.replace('bg-pink-600', 'bg-emerald-600');
+      } catch(e) {
+          alert('Failed to submit job.');
+          btn.innerHTML = 'Generate Presenter Video';
+          btn.disabled = false;
+      }
+  }
+</script>
+</body>
+</html>

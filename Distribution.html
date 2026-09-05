@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Distribution & Social</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #0ea5e9; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='User_Dashboard.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Distribution Gateway</span>
+        </div>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Publishing</span>
+    </div>
+    <div class="space-y-1">
+      <button onclick="setMode('channels')" id="mode-btn-channels" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Channel Accounts
+      </button>
+      <button onclick="setMode('queue')" id="mode-btn-queue" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Approval Queue
+      </button>
+      <button onclick="setMode('calendar')" id="mode-btn-calendar" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Content Calendar
+      </button>
+      <button onclick="setMode('history')" id="mode-btn-history" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Publish History
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    <!-- CHANNELS PANEL -->
+    <div id="panel-channels" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Connected Channels</h2>
+              <p class="text-sm text-zinc-400">Manage social accounts and publishing adapters.</p>
+            </div>
+            <button class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded text-sm font-medium">+ Connect Channel</button>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Connected Channel -->
+              <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 flex items-center justify-between">
+                  <div class="flex items-center gap-4">
+                      <div class="w-10 h-10 bg-[#0a66c2] rounded-lg flex items-center justify-center">
+                          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                      </div>
+                      <div>
+                          <h3 class="text-white font-bold">Vectra Corporate</h3>
+                          <p class="text-xs text-zinc-400">LinkedIn Company Page</p>
+                      </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                      <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20">CONNECTED</span>
+                      <button class="text-zinc-500 hover:text-white transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg></button>
+                  </div>
+              </div>
+              
+              <!-- Required Auth Channel -->
+              <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 flex items-center justify-between opacity-80">
+                  <div class="flex items-center gap-4">
+                      <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
+                          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                      </div>
+                      <div>
+                          <h3 class="text-white font-bold">VectraApp</h3>
+                          <p class="text-xs text-zinc-400">X (Twitter)</p>
+                      </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                      <span class="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-1 rounded border border-amber-500/20">REAUTH_REQUIRED</span>
+                      <button class="text-zinc-500 hover:text-white transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg></button>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-lg p-5 mt-6">
+              <h3 class="text-sm font-bold text-white mb-2">Adapter Configuration (Admin Only)</h3>
+              <div class="text-xs text-zinc-400 space-y-2 mb-4">
+                  <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+                      <span>Direct Meta API</span>
+                      <span class="text-emerald-400">Enabled</span>
+                  </div>
+                  <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+                      <span>Direct LinkedIn API</span>
+                      <span class="text-emerald-400">Enabled</span>
+                  </div>
+                  <div class="flex justify-between items-center border-b border-zinc-800 pb-2 opacity-50">
+                      <span>Postiz Adapter</span>
+                      <span>Disabled</span>
+                  </div>
+              </div>
+              <p class="text-[10px] text-zinc-500">Distribution functionality remains available without Postiz.</p>
+          </div>
+       </div>
+    </div>
+    
+    <!-- APPROVAL QUEUE PANEL -->
+    <div id="panel-queue" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Publish Approval Queue</h2>
+            <p class="text-sm text-zinc-400">Review content generated by Ads Engine or AI Assistants before it goes live.</p>
+          </div>
+          
+          <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 relative">
+              <div class="flex gap-4">
+                  <!-- Media Preview -->
+                  <div class="w-32 h-32 bg-zinc-800 rounded-lg shrink-0 flex items-center justify-center overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=300&h=300&fit=crop" class="w-full h-full object-cover opacity-80" alt="Preview">
+                  </div>
+                  
+                  <div class="flex-1">
+                      <div class="flex justify-between items-start mb-2">
+                          <div>
+                              <span class="text-[10px] bg-sky-500/10 text-sky-400 px-2 py-1 rounded border border-sky-500/20 uppercase">Waiting Approval</span>
+                              <h3 class="text-white font-bold mt-1">LinkedIn Campaign: Vectra Trial</h3>
+                          </div>
+                          <div class="text-xs text-zinc-500 flex items-center gap-1">
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                              Tomorrow, 9:00 AM
+                          </div>
+                      </div>
+                      
+                      <div class="bg-[#121214] border border-zinc-800 rounded p-3 mb-3">
+                          <p class="text-sm text-zinc-300">Stop paying for 10 disjointed AI subscriptions. Meet Vectra: the all-in-one creative factory that handles research, video, avatars, and dubbing in a single unified workflow.</p>
+                      </div>
+                      
+                      <div class="flex items-center gap-2">
+                          <button onclick="approvePost()" id="btn-approve" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 rounded text-xs font-medium transition-colors">Approve & Schedule</button>
+                          <button class="bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-1.5 rounded text-xs transition-colors">Reject</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- CALENDAR PANEL -->
+    <div id="panel-calendar" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Content Calendar</h2>
+              <p class="text-sm text-zinc-400">Overview of scheduled publish jobs.</p>
+            </div>
+            <div class="flex bg-zinc-900 border border-zinc-800 rounded-lg p-1">
+                <button class="px-3 py-1 bg-zinc-800 text-white text-xs rounded shadow-sm">Week</button>
+                <button class="px-3 py-1 text-zinc-400 hover:text-white text-xs rounded transition-colors">Month</button>
+            </div>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-6 min-h-[400px] flex items-center justify-center flex-col">
+             <!-- Mock Calendar View -->
+             <svg class="w-12 h-12 text-zinc-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+             <p class="text-zinc-500 text-sm">Calendar functionality requires scheduled jobs.</p>
+             <p class="text-zinc-600 text-xs mt-1">Go to Approval Queue to schedule content.</p>
+          </div>
+       </div>
+    </div>
+    
+    <!-- HISTORY PANEL -->
+    <div id="panel-history" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Publish History & Status</h2>
+            <p class="text-sm text-zinc-400">Track webhook confirmations, external links, and analytics ingestion prep.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl overflow-hidden">
+             <table class="w-full text-left text-sm text-zinc-300">
+                <thead class="bg-zinc-900/50 text-xs uppercase text-zinc-500">
+                    <tr>
+                        <th class="px-6 py-3 font-medium">Content / Job</th>
+                        <th class="px-6 py-3 font-medium">Channel</th>
+                        <th class="px-6 py-3 font-medium">Status</th>
+                        <th class="px-6 py-3 font-medium text-right">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-800">
+                    <tr class="hover:bg-zinc-800/30 transition-colors">
+                        <td class="px-6 py-4 font-medium text-white">Product Launch Video (v2)</td>
+                        <td class="px-6 py-4">LinkedIn</td>
+                        <td class="px-6 py-4"><span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20">PUBLISHED</span></td>
+                        <td class="px-6 py-4 text-right text-zinc-500 text-xs">Today, 10:00 AM</td>
+                    </tr>
+                    <tr class="hover:bg-zinc-800/30 transition-colors">
+                        <td class="px-6 py-4 font-medium text-white">Feature Announcement</td>
+                        <td class="px-6 py-4">X (Twitter)</td>
+                        <td class="px-6 py-4"><span class="text-[10px] bg-rose-500/10 text-rose-400 px-2 py-1 rounded border border-rose-500/20">FAILED (AUTH)</span></td>
+                        <td class="px-6 py-4 text-right text-zinc-500 text-xs">Yesterday</td>
+                    </tr>
+                </tbody>
+             </table>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['channels', 'queue', 'calendar', 'history'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    document.getElementById('mode-btn-' + mode).classList.add('bg-zinc-800/50', 'text-white');
+    document.getElementById('mode-btn-' + mode).classList.remove('text-zinc-400');
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  async function approvePost() {
+      const btn = document.getElementById('btn-approve');
+      btn.innerHTML = `<div class="spinner border-t-white border-l-white inline-block align-middle mr-1"></div> Approving...`;
+      btn.disabled = true;
+      
+      try {
+          const res = await fetch('/api/distribution/approve', { method: 'POST' });
+          const data = await res.json();
+          btn.innerHTML = 'Scheduled';
+          btn.classList.replace('bg-emerald-600', 'bg-sky-600');
+      } catch(e) {
+          alert('Failed to approve.');
+          btn.innerHTML = 'Approve & Schedule';
+          btn.disabled = false;
+      }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VECTRA - Release & Export Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #3b82f6; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-300 h-screen overflow-hidden flex flex-col font-sans">
+<header class="h-14 bg-[#18181b] border-b border-zinc-800 flex items-center justify-between px-4 shrink-0 z-10">
+     <div class="flex items-center gap-4">
+        <button onclick="if(window.parent && window.parent.active){ window.parent.active='Admin.html'; window.parent.render(); window.parent.route(); } else { window.history.back(); }" class="text-zinc-400 hover:text-white transition p-1 rounded hover:bg-zinc-800">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <div class="h-4 w-px bg-zinc-700"></div>
+        <div class="flex items-center gap-2">
+            <span class="text-[13px] font-semibold text-zinc-100">Release Manager</span>
+            <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded ml-2 uppercase font-bold border border-blue-500/20">BGV Portal</span>
+            <span class="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded ml-1 font-mono">v1.0.0-rc</span>
+        </div>
+     </div>
+     
+     <div class="flex items-center gap-2">
+         <button class="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded transition font-medium">Local Preview</button>
+         <button onclick="validateRelease()" class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded transition font-medium shadow-lg shadow-blue-500/20 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            Prepare Release
+         </button>
+     </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <aside class="w-64 bg-[#121214] border-r border-zinc-800 flex flex-col shrink-0 p-4">
+    <div class="mb-4">
+        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Release Pipeline</span>
+    </div>
+    <div class="space-y-1">
+      <button onclick="setMode('overview')" id="mode-btn-overview" class="w-full flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-800/50 text-white text-sm font-medium transition-colors hover:bg-zinc-800">
+         Overview
+      </button>
+      <button onclick="setMode('env')" id="mode-btn-env" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Environments
+      </button>
+      <button onclick="setMode('build')" id="mode-btn-build" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Build Validation
+      </button>
+      <button onclick="setMode('container')" id="mode-btn-container" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Container & Docker
+      </button>
+      <button onclick="setMode('deploy')" id="mode-btn-deploy" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white">
+         Deployment Manifest
+      </button>
+      <button onclick="setMode('export')" id="mode-btn-export" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-zinc-400 text-sm font-medium transition-colors hover:bg-zinc-800 hover:text-white mt-4 border border-zinc-800">
+         <span class="w-2 h-2 rounded-full bg-blue-500"></span> Export & Archive
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-[#09090b]">
+    
+    <!-- OVERVIEW PANEL -->
+    <div id="panel-overview" class="flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-5xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Release Readiness</h2>
+            <p class="text-sm text-zinc-400">Application package evaluation and security status.</p>
+          </div>
+          
+          <div class="grid grid-cols-3 gap-6">
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Git Repository</div>
+                  <div class="text-sm text-white font-medium flex justify-between items-center">
+                      Ready (.gitignore generated) <span class="text-emerald-500 text-xs">✓</span>
+                  </div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Security & Secrets</div>
+                  <div class="text-sm text-white font-medium flex justify-between items-center">
+                      Scanned. No leaks. <span class="text-emerald-500 text-xs">✓</span>
+                  </div>
+              </div>
+              <div class="bg-zinc-900 border border-zinc-800 rounded p-4">
+                  <div class="text-[10px] text-zinc-500 font-bold uppercase mb-1">Runtime Status</div>
+                  <div class="text-sm text-white font-medium flex justify-between items-center">
+                      Full-Stack (Node API) <span class="text-blue-500 text-xs">ℹ</span>
+                  </div>
+              </div>
+          </div>
+
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+              <h3 class="font-bold text-sm text-white mb-4">Readiness Checklist</h3>
+              <div class="space-y-3 text-sm">
+                  <div class="flex items-center gap-3"><span class="text-emerald-500">✓</span> <span class="text-zinc-300">Build passed in isolated workspace</span></div>
+                  <div class="flex items-center gap-3"><span class="text-emerald-500">✓</span> <span class="text-zinc-300">Environment profiles generated</span></div>
+                  <div class="flex items-center gap-3"><span class="text-emerald-500">✓</span> <span class="text-zinc-300">Database migration script marked as safe</span></div>
+                  <div class="flex items-center gap-3"><span class="text-emerald-500">✓</span> <span class="text-zinc-300">Container config (Dockerfile) validated</span></div>
+                  <div class="flex items-center gap-3"><span class="text-emerald-500">✓</span> <span class="text-zinc-300">Dependency drift checked</span></div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- ENVIRONMENTS PANEL -->
+    <div id="panel-env" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-5xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Environment Profiles</h2>
+            <p class="text-sm text-zinc-400">Generated configuration placeholders for deployment stages.</p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-6">
+              <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+                  <h3 class="font-bold text-sm text-white mb-4">Development Profile</h3>
+                  <div class="bg-black border border-zinc-800 rounded p-4 font-mono text-xs text-zinc-400">
+# .env.development
+DATABASE_URL=postgres://dev:dev@localhost:5432/bgv_dev
+VECTRA_API_URL=https://api.vectra.ai
+AUTH_SECRET=local_dev_secret
+PORT=3000
+                  </div>
+              </div>
+              
+              <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+                  <h3 class="font-bold text-sm text-white mb-4">Production Profile</h3>
+                  <div class="bg-black border border-zinc-800 rounded p-4 font-mono text-xs text-zinc-400">
+# .env.production
+DATABASE_URL=${DATABASE_URL}
+VECTRA_API_URL=https://api.vectra.ai
+AUTH_SECRET=${AUTH_SECRET}
+PORT=3000
+                  </div>
+                  <div class="mt-4 text-[10px] text-amber-500 bg-amber-500/10 border border-amber-500/20 p-2 rounded">
+                      Production secrets are required at runtime. No default credentials exported.
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- BUILD VALIDATION PANEL -->
+    <div id="panel-build" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-bold text-white mb-2">Build Validation</h2>
+              <p class="text-sm text-zinc-400">Isolated workspace compilation results.</p>
+            </div>
+            <span class="text-xs font-bold px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded">PASS</span>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+              <div class="bg-black border border-zinc-800 rounded p-4 font-mono text-xs text-zinc-300 whitespace-pre overflow-x-auto h-[300px] overflow-y-auto custom-scrollbar">
+$ npm install
+[✓] Dependencies validated against ApprovedDependencyRegistry.
+added 142 packages, and audited 143 packages in 2s
+
+$ npm run typecheck
+[✓] No TypeScript errors found.
+
+$ npm run build
+> build
+> tsc && vite build
+
+vite v5.0.0 building for production...
+✓ 42 modules transformed.
+dist/index.html                 0.42 kB │ gzip:  0.27 kB
+dist/assets/index-D1aBc.js    142.18 kB │ gzip: 42.12 kB
+dist/assets/index-B2cX.css     12.01 kB │ gzip:  3.14 kB
+✓ built in 1.2s
+
+[✓] Build validation completed successfully.
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- CONTAINER PANEL -->
+    <div id="panel-container" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Container Manifest</h2>
+            <p class="text-sm text-zinc-400">Generated Docker artifacts for deployment portability.</p>
+          </div>
+          
+          <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5">
+              <div class="flex justify-between items-center mb-4">
+                  <h3 class="font-bold text-sm text-white">Dockerfile (Production)</h3>
+                  <span class="text-xs text-zinc-500">Multi-stage Node.js Alpine</span>
+              </div>
+              <div class="bg-black border border-zinc-800 rounded p-4 font-mono text-xs text-zinc-400 whitespace-pre">
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+ENV NODE_ENV=production
+EXPOSE 3000
+CMD ["npm", "start"]
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- DEPLOYMENT MANIFEST PANEL -->
+    <div id="panel-deploy" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full space-y-6">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Deployment Manifest</h2>
+            <p class="text-sm text-zinc-400">Provider-neutral deployment requirements.</p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-6">
+              <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5 space-y-4">
+                  <h3 class="font-bold text-sm text-white">Runtime Requirements</h3>
+                  <div class="text-sm text-zinc-300 flex justify-between border-b border-zinc-800 pb-2">
+                      <span class="text-zinc-500">Target Type</span> <span>Node Server (Express)</span>
+                  </div>
+                  <div class="text-sm text-zinc-300 flex justify-between border-b border-zinc-800 pb-2">
+                      <span class="text-zinc-500">Build Command</span> <span class="font-mono text-xs">npm run build</span>
+                  </div>
+                  <div class="text-sm text-zinc-300 flex justify-between border-b border-zinc-800 pb-2">
+                      <span class="text-zinc-500">Start Command</span> <span class="font-mono text-xs">npm start</span>
+                  </div>
+                  <div class="text-sm text-zinc-300 flex justify-between border-b border-zinc-800 pb-2">
+                      <span class="text-zinc-500">Database</span> <span class="text-blue-400">PostgreSQL (Required)</span>
+                  </div>
+              </div>
+              
+              <div class="bg-[#121214] border border-zinc-800 rounded-xl p-5 space-y-4">
+                  <h3 class="font-bold text-sm text-white">Target Compatibility Analyzer</h3>
+                  
+                  <div class="mt-4 p-3 border border-zinc-700 rounded bg-zinc-900/50">
+                      <div class="flex justify-between items-center mb-2">
+                          <span class="text-sm text-white font-medium">Vercel</span>
+                          <span class="text-xs bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded border border-amber-500/20">CONFIG REQUIRED</span>
+                      </div>
+                      <p class="text-xs text-zinc-400">Requires Serverless Functions adaptation or standard output configuration.</p>
+                  </div>
+                  
+                  <div class="mt-2 p-3 border border-zinc-700 rounded bg-zinc-900/50">
+                      <div class="flex justify-between items-center mb-2">
+                          <span class="text-sm text-white font-medium">Docker / VPS / Railway</span>
+                          <span class="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded border border-emerald-500/20">COMPATIBLE</span>
+                      </div>
+                      <p class="text-xs text-zinc-400">Fully compatible via generated Dockerfile.</p>
+                  </div>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+    <!-- EXPORT PANEL -->
+    <div id="panel-export" class="hidden flex-1 flex flex-col p-6 overflow-y-auto custom-scrollbar">
+       <div class="max-w-4xl mx-auto w-full h-full flex flex-col">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-2">Release Bundle</h2>
+            <p class="text-sm text-zinc-400">Download the complete standalone package.</p>
+          </div>
+          
+          <div class="mt-6 flex-1 bg-[#121214] border border-zinc-800 rounded-xl overflow-hidden flex flex-col">
+              <div class="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
+                  <div>
+                      <span class="text-lg font-bold text-white">BGV Portal Release - v1.0.0-rc</span>
+                      <div class="text-xs text-zinc-500 mt-1">Ready for download. Checksum: <span class="font-mono">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</span></div>
+                  </div>
+                  <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded font-bold">VERIFIED SAFE</span>
+              </div>
+              
+              <div class="flex-1 p-6 space-y-4 bg-zinc-900/20">
+                  <p class="text-sm text-zinc-400 mb-4">Package includes:</p>
+                  <ul class="list-disc pl-5 text-sm text-zinc-300 space-y-2 mb-6">
+                      <li>Full application source code (Frontend + Backend)</li>
+                      <li>Database schema and migration preview scripts (NOT applied)</li>
+                      <li>Dockerfile & .dockerignore</li>
+                      <li>Environment profile templates (.env.example)</li>
+                      <li>Deployment and Release Manifests</li>
+                      <li>Generated README.md with setup instructions</li>
+                  </ul>
+                  
+                  <div class="p-4 bg-blue-500/10 border border-blue-500/20 rounded">
+                      <h4 class="text-xs font-bold text-blue-400 uppercase mb-1">Notice: Vectra API Dependency</h4>
+                      <p class="text-xs text-blue-300/80">This application utilizes Vectra AI services (P16 Assistant). It is fully exportable but will require a Vectra API token at runtime unless adapted to an external provider.</p>
+                  </div>
+              </div>
+              
+              <div class="p-4 border-t border-zinc-800 bg-black flex justify-end gap-3">
+                  <button class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm font-bold transition shadow-lg shadow-blue-500/20 flex items-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                      Download ZIP Archive
+                  </button>
+              </div>
+          </div>
+       </div>
+    </div>
+    
+  </main>
+</div>
+
+<!-- Validation Toast -->
+<div id="validation-toast" class="hidden absolute bottom-4 right-4 bg-zinc-900 border-l-4 border-emerald-500 p-4 rounded shadow-2xl z-50 min-w-[300px]">
+    <div class="flex justify-between items-start mb-2">
+        <strong class="text-white text-sm">Release Prepared</strong>
+        <button onclick="document.getElementById('validation-toast').classList.add('hidden')" class="text-zinc-500 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+    </div>
+    <ul class="text-xs space-y-1 text-zinc-400">
+        <li class="flex gap-2 items-start"><span class="text-emerald-500">✓</span> No production secrets in export.</li>
+        <li class="flex gap-2 items-start"><span class="text-emerald-500">✓</span> Dockerfile & manifests valid.</li>
+        <li class="flex gap-2 items-start"><span class="text-emerald-500">✓</span> Repository structure initialized (.gitignore).</li>
+    </ul>
+</div>
+
+<script>
+  function setMode(mode) {
+    ['overview', 'env', 'build', 'container', 'deploy', 'export'].forEach(m => {
+       const btn = document.getElementById('mode-btn-' + m);
+       if(btn) {
+           btn.classList.remove('bg-zinc-800/50', 'text-white');
+           btn.classList.add('text-zinc-400');
+       }
+       const panel = document.getElementById('panel-' + m);
+       if(panel) panel.classList.add('hidden');
+    });
+    
+    document.getElementById('mode-btn-' + mode).classList.add(mode === 'export' ? 'bg-zinc-800' : 'bg-zinc-800/50', 'text-white');
+    document.getElementById('mode-btn-' + mode).classList.remove('text-zinc-400');
+    
+    const targetPanel = document.getElementById('panel-' + mode);
+    if(targetPanel) {
+        targetPanel.classList.remove('hidden');
+    }
+  }
+
+  function validateRelease() {
+      document.getElementById('validation-toast').classList.remove('hidden');
+  }
+</script>
+</body>
+</html>

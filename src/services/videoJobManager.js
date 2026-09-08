@@ -1,1 +1,1 @@
-module.exports = { videoJobManager: { getAllJobs: () => [] } };
+module.exports = { videoJobManager: {} };

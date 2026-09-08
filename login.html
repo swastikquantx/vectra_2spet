@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Vectra Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { brand: '#ffffff', accent: '#7c3aed' },
+          fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Syne', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-zinc-950 text-zinc-50 font-sans min-h-screen flex flex-col selection:bg-accent selection:text-white">
+
+  <header class="h-16 border-b border-zinc-900 flex items-center justify-between px-6 lg:px-12 bg-zinc-950/80 backdrop-blur sticky top-0 z-50">
+      <a class="flex items-center gap-3" href="index.html">
+        <img src="https://raw.githubusercontent.com/swastikquantx/vectra_2spet/main/vectra_logo.jpg" alt="Vectra" class="w-9 h-9 rounded-md object-contain bg-white">
+        <div class="flex flex-col justify-center">
+          <span class="font-display font-bold tracking-tight text-xl text-white leading-none">Vectra</span>
+          <span class="text-[10px] text-zinc-400 font-medium mt-1 leading-none">Create Cinematic Magic</span>
+        </div>
+      </a>
+    <nav class="hidden md:flex items-center gap-8 font-medium text-sm text-zinc-400">
+      <a href="create-studio.html" class="hover:text-white transition-colors">Create Studio</a>
+      <a href="templates.html" class="hover:text-white transition-colors">Templates</a>
+      <a href="pricing.html" class="hover:text-white transition-colors">Pricing</a>
+    </nav>
+    <div class="flex items-center gap-4">
+      <a href="create-studio.html" class="hidden md:flex items-center justify-center bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-zinc-200 transition-colors">Start Creating</a>
+    </div>
+  </header>
+
+  <main class="flex-1 flex items-center justify-center p-6">
+    <div class="w-full max-w-md bg-zinc-900/80 border border-zinc-800 rounded-3xl p-8 lg:p-10 shadow-2xl backdrop-blur-xl">
+      <div class="text-center mb-8">
+        <h1 class="font-display font-extrabold text-3xl text-white mb-2">Welcome Back</h1>
+        <p class="text-sm text-zinc-400">Log in or create a new Vectra account.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="text-[11px] font-semibold text-zinc-500 uppercase tracking-widest block mb-2">Email</label>
+          <input id="email" type="email" placeholder="hello@example.com" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-violet-500/50 transition-colors">
+        </div>
+        <div>
+          <label class="text-[11px] font-semibold text-zinc-500 uppercase tracking-widest block mb-2">Password</label>
+          <input id="password" type="password" placeholder="••••••••" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-violet-500/50 transition-colors">
+        </div>
+        
+        <div class="pt-4 space-y-3">
+          <button id="loginBtn" class="w-full bg-white text-black py-3 rounded-xl font-bold hover:bg-zinc-200 transition-colors shadow">Login</button>
+          <button id="registerBtn" class="w-full bg-zinc-800 border border-zinc-700 text-white py-3 rounded-xl font-semibold hover:bg-zinc-700 transition-colors">Create Account</button>
+        </div>
+        
+        <div class="mt-6 text-center">
+          <p class="text-xs text-zinc-500 font-medium" id="authMsg">Authentication provider can be connected later.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div data-global-footer></div>
+
+  <script src="assets/js/core.js"></script>
+  <script src="components/footer.js"></script>
+  <script>
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const email = document.getElementById('email');
+    const authMsg = document.getElementById('authMsg');
+
+    if(loginBtn) {
+      loginBtn.onclick = () => {
+        if(window.Vectra) window.Vectra.save('session', {email: email.value, loggedIn: true});
+        authMsg.textContent = 'Local demo session created. Redirecting...';
+        authMsg.classList.add('text-emerald-400');
+        setTimeout(() => window.location.href = 'create-studio.html', 1000);
+      };
+    }
+    if(registerBtn) {
+      registerBtn.onclick = () => {
+        if(window.Vectra) window.Vectra.save('session', {email: email.value, registered: true});
+        authMsg.textContent = 'Local demo account created. Redirecting...';
+        authMsg.classList.add('text-emerald-400');
+        setTimeout(() => window.location.href = 'create-studio.html', 1000);
+      };
+    }
+  </script>
+</body>
+</html>

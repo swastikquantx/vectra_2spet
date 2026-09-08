@@ -1,0 +1,8 @@
+{
+  "name": "VECTRA",
+  "description": "Vectra Cinematic Magic Studio Pro All-in-One Platform",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

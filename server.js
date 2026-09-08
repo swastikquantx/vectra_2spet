@@ -971,6 +971,11 @@ app.get('/api/creator/security/overview', (req, res) => {
 
 
 // P32 Final Audit Routes
+app.get('/download-project', (req, res) => {
+  const file = path.join(__dirname, 'vectra-project.zip');
+  res.download(file, 'vectra-project.zip');
+});
+
 app.get('/robots.txt', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/robots.txt'));
 });

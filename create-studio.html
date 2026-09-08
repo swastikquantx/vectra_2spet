@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Vectra Create Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { brand: '#ffffff', accent: '#7c3aed' },
+          fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Syne', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Prevent scrolling on desktop layout */
+    body { overflow: hidden; height: 100vh; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+  </style>
+</head>
+<body class="bg-zinc-950 text-zinc-50 font-sans h-screen flex flex-col selection:bg-accent selection:text-white">
+
+  <!-- Header -->
+  <header class="h-14 border-b border-zinc-900 flex items-center justify-between px-4 bg-zinc-950 shrink-0 z-50">
+      <a class="flex items-center gap-2.5" href="index.html">
+        <img src="https://raw.githubusercontent.com/swastikquantx/vectra_2spet/main/vectra_logo.jpg" alt="Vectra" class="w-7 h-7 rounded object-contain bg-white">
+        <div class="flex flex-col justify-center">
+          <span class="font-display font-bold tracking-tight text-white leading-none">Vectra</span>
+          <span class="text-[9px] text-zinc-400 font-medium mt-0.5 leading-none">Create Cinematic Magic</span>
+        </div>
+      </a>
+    <nav class="hidden md:flex items-center gap-6 font-medium text-xs text-zinc-400">
+      <a href="create-studio.html" class="text-white">Create Studio</a>
+      <a href="templates.html" class="hover:text-white transition-colors">Templates</a>
+      <a href="pricing.html" class="hover:text-white transition-colors">Pricing</a>
+    </nav>
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-full px-3 py-1 text-xs">
+         <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 
+         <span id="providerStatus" class="text-zinc-300">Provider: VECTRA_VIDEO (Idle)</span>
+      </div>
+      <a href="login.html" class="text-xs font-medium hover:text-white transition-colors text-zinc-400">Account</a>
+    </div>
+  </header>
+
+  <!-- Modality Ribbon -->
+  <div class="h-12 border-b border-zinc-900 flex items-center px-4 gap-2 bg-zinc-950 shrink-0 text-xs overflow-x-auto hide-scrollbar">
+    <button data-mode="video" class="px-4 py-1.5 bg-white text-black rounded-full font-semibold transition-colors">Video</button>
+    <button data-mode="image" class="px-4 py-1.5 text-zinc-400 hover:text-white font-medium transition-colors">Image</button>
+    <button data-mode="audio" class="px-4 py-1.5 text-zinc-400 hover:text-white font-medium transition-colors">Audio</button>
+    <button data-mode="voice" class="px-4 py-1.5 text-zinc-400 hover:text-white font-medium transition-colors">Voice</button>
+    <button data-mode="script" class="px-4 py-1.5 text-zinc-400 hover:text-white font-medium transition-colors">Script</button>
+    <button data-mode="ads" class="px-4 py-1.5 text-zinc-400 hover:text-white font-medium transition-colors">Ads</button>
+    <button data-mode="apps" class="px-4 py-1.5 text-zinc-400 hover:text-white font-medium transition-colors">Apps</button>
+  </div>
+
+  <!-- Studio Main -->
+  <div class="flex-1 flex overflow-hidden">
+    
+    <!-- Left Navigation -->
+    <aside class="w-60 border-r border-zinc-900 flex flex-col bg-[#09090b] shrink-0">
+      <div class="p-4 border-b border-zinc-900 text-xs font-semibold text-zinc-400 uppercase tracking-widest">Library</div>
+      <div class="flex-1 overflow-y-auto p-2 space-y-0.5">
+        <button data-view="builder" class="w-full text-left px-3 py-2 rounded-lg bg-zinc-800 text-white text-sm font-medium transition-colors">Builder Workspace</button>
+        <button data-view="projects" class="w-full text-left px-3 py-2 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 text-sm font-medium transition-colors">Projects</button>
+        <button data-view="assets" class="w-full text-left px-3 py-2 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 text-sm font-medium transition-colors">Assets & Media</button>
+        <button data-view="brand" class="w-full text-left px-3 py-2 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 text-sm font-medium transition-colors">Brand Kit</button>
+        <button data-view="history" class="w-full text-left px-3 py-2 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 text-sm font-medium transition-colors">Version History</button>
+        <div class="my-2 border-t border-zinc-900/50"></div>
+        <button data-view="requests" class="w-full text-left px-3 py-2 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 text-sm font-medium transition-colors">Requests</button>
+        <button data-view="tasks" class="w-full text-left px-3 py-2 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 text-sm font-medium transition-colors">Tasks</button>
+        <button data-view="messages" class="w-full text-left px-3 py-2 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 text-sm font-medium transition-colors flex justify-between items-center">Messages <span class="bg-violet-600 text-white text-[10px] px-1.5 py-0.5 rounded">2</span></button>
+      </div>
+      <div class="p-4 border-t border-zinc-900 space-y-2">
+        <button class="w-full py-2 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded-lg text-xs font-semibold text-white transition-colors">Deploy Target</button>
+        <button id="exportBtn" class="w-full py-2 bg-white text-black hover:bg-zinc-200 rounded-lg text-xs font-bold transition-colors">Export Project</button>
+      </div>
+    </aside>
+
+    <!-- Center Canvas Area -->
+    <main class="flex-1 flex flex-col bg-zinc-950 relative overflow-hidden">
+      
+      <!-- Top HUD -->
+      <div class="absolute top-4 left-4 right-4 flex justify-between z-10 pointer-events-none">
+         <div class="pointer-events-auto">
+            <!-- Toolbars -->
+         </div>
+         <div class="bg-zinc-900/90 backdrop-blur border border-zinc-800 px-3 py-1.5 rounded-lg text-xs pointer-events-auto flex items-center gap-2 shadow-xl">
+            <svg class="w-3.5 h-3.5 text-zinc-400 animate-spin-slow" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+            No active generation jobs
+         </div>
+      </div>
+
+      <!-- Builder View (Active by default) -->
+      <div id="builderView" class="flex-1 flex flex-col h-full">
+        <!-- Toolbar -->
+        <div class="h-12 border-b border-zinc-900 flex items-center px-4 gap-2 bg-zinc-950/50 shrink-0 relative z-20">
+          <button data-add="text" class="px-3 py-1.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded text-xs font-medium transition-colors">Add Text</button>
+          <button data-add="shape" class="px-3 py-1.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded text-xs font-medium transition-colors">Add Shape</button>
+          <button data-add="image" class="px-3 py-1.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded text-xs font-medium transition-colors">Add Image</button>
+          <div class="w-px h-4 bg-zinc-800 mx-2"></div>
+          <button id="generateBtn" class="px-4 py-1.5 bg-violet-600 hover:bg-violet-700 text-white rounded text-xs font-bold transition-colors ml-auto shadow-[0_0_15px_rgba(124,58,237,0.3)]">Generate Asset</button>
+        </div>
+        
+        <!-- Canvas -->
+        <div class="flex-1 relative overflow-auto p-8 flex items-center justify-center bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiMzZjNmNDYiLz48L3N2Zz4=')]">
+           <div id="canvas" class="w-full max-w-3xl aspect-video bg-zinc-900 border border-zinc-800 shadow-2xl rounded-lg flex items-center justify-center relative overflow-hidden">
+             <div class="text-zinc-600 font-medium text-sm flex flex-col items-center gap-3">
+                <svg class="w-8 h-8 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                Workspace Canvas
+             </div>
+           </div>
+        </div>
+
+        <!-- Timeline / Layers (Bottom Pane) -->
+        <div class="h-64 border-t border-zinc-900 bg-[#09090b] flex flex-col shrink-0">
+          <div class="flex border-b border-zinc-900 text-xs font-medium">
+             <button class="px-6 py-2.5 border-r border-zinc-900 bg-zinc-900 text-white">Timeline</button>
+             <button class="px-6 py-2.5 border-r border-zinc-900 text-zinc-500 hover:text-white transition-colors">Layers</button>
+          </div>
+          <div class="flex-1 p-4 overflow-y-auto text-sm text-zinc-400">
+             <div class="flex items-center gap-4 py-2 border-b border-zinc-900/50">
+               <span class="w-4 h-4 rounded bg-zinc-800 flex items-center justify-center text-[10px]">1</span>
+               <span class="text-white">Main Sequence</span>
+               <div class="flex-1 h-6 bg-zinc-900 rounded border border-zinc-800 relative">
+                 <div class="absolute left-4 top-1 bottom-1 w-32 bg-violet-600/20 border border-violet-500/50 rounded"></div>
+               </div>
+             </div>
+             <div class="flex items-center gap-4 py-2 border-b border-zinc-900/50">
+               <span class="w-4 h-4 rounded bg-zinc-800 flex items-center justify-center text-[10px]">2</span>
+               <span>Audio Track</span>
+               <div class="flex-1 h-6 bg-zinc-900 rounded border border-zinc-800 relative">
+                 <div class="absolute left-0 top-1 bottom-1 w-64 bg-emerald-600/20 border border-emerald-500/50 rounded"></div>
+               </div>
+             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other Views (Hidden by default) -->
+      <div id="requestsView" class="hidden flex-1 p-8 flex-col bg-zinc-950">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="font-display text-2xl font-bold text-white">Requests</h2>
+          <button id="newRequestBtn" class="px-4 py-2 bg-white text-black rounded font-semibold text-sm">New Request</button>
+        </div>
+        <div id="requestList" class="grid gap-4">
+           <div class="p-4 border border-zinc-800 rounded-xl bg-zinc-900/50 flex justify-between items-center">
+             <div>
+               <div class="font-medium text-white mb-1">Generate Ad Variations</div>
+               <div class="text-xs text-zinc-500">Status: Pending • Created 2 hours ago</div>
+             </div>
+             <button class="text-xs bg-zinc-800 px-3 py-1.5 rounded hover:bg-zinc-700">Review</button>
+           </div>
+        </div>
+      </div>
+
+      <div id="tasksView" class="hidden flex-1 p-8 flex-col bg-zinc-950">
+        <h2 class="font-display text-2xl font-bold text-white mb-6">Tasks</h2>
+        <div id="taskList" class="grid gap-4">
+          <div class="text-sm text-zinc-500">No active tasks assigned to this project.</div>
+        </div>
+      </div>
+
+      <div id="messagesView" class="hidden flex-1 p-8 flex-col bg-zinc-950">
+        <h2 class="font-display text-2xl font-bold text-white mb-6">Messages</h2>
+        <div id="messageList" class="grid gap-4">
+           <div class="p-4 border border-zinc-800 rounded-xl bg-zinc-900/50">
+             <div class="font-medium text-white text-sm mb-1">System Audit</div>
+             <div class="text-xs text-zinc-400">Blueprint analysis completed successfully. Ready for deployment.</div>
+           </div>
+        </div>
+      </div>
+
+      <div id="genericView" class="hidden flex-1 p-8 flex-col bg-zinc-950 items-center justify-center">
+        <div class="w-16 h-16 bg-zinc-900 rounded-2xl flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        </div>
+        <h2 id="genericTitle" class="font-display text-xl font-bold text-white mb-2">Module</h2>
+        <p id="genericText" class="text-sm text-zinc-500">This module is currently inactive in the workspace view.</p>
+      </div>
+      
+    </main>
+
+    <!-- Right Sidebar -->
+    <aside class="w-80 border-l border-zinc-900 flex flex-col bg-[#09090b] shrink-0">
+      <div class="p-4 border-b border-zinc-900 text-sm font-semibold flex justify-between items-center text-white">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          AI Copilot
+        </div>
+        <span class="text-[10px] bg-zinc-800 border border-zinc-700 px-2 py-0.5 rounded text-zinc-400 font-mono">⌘K</span>
+      </div>
+      
+      <div class="flex-1 p-4 overflow-y-auto flex flex-col gap-4 text-sm scroll-smooth custom-scrollbar" id="chatLog">
+         <div class="bg-zinc-900 border border-zinc-800 p-3.5 rounded-xl text-zinc-300 text-sm leading-relaxed shadow-sm">
+           Hello! I'm your creative orchestrator. Describe a workflow, app blueprint, or media asset you want to generate.
+         </div>
+      </div>
+      
+      <div class="p-4 border-t border-zinc-900 bg-zinc-950 relative">
+         <textarea id="chatInput" rows="2" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-violet-500/50 resize-none shadow-inner placeholder-zinc-600 transition-colors" placeholder="e.g. Generate a cinematic product shot..."></textarea>
+         <button id="chatSend" class="absolute bottom-6 right-6 p-1.5 bg-white text-black rounded-lg hover:bg-zinc-200 transition-colors shadow">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+         </button>
+      </div>
+
+      <div class="border-t border-zinc-900 p-4 bg-[#09090b]">
+         <div class="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Properties</div>
+         <div class="space-y-4">
+            <div>
+               <label class="text-[11px] text-zinc-500 block mb-1.5 font-medium">Selected Layer</label>
+               <input type="text" id="propText" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-700" value="Main Sequence">
+            </div>
+            <div class="flex items-center gap-3">
+               <label class="text-[11px] text-zinc-500 font-medium">Accent</label>
+               <input id="propColor" type="color" value="#7c3aed" class="w-8 h-8 rounded border-0 bg-transparent cursor-pointer">
+            </div>
+            <button id="applyProps" class="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg text-xs font-semibold transition-colors mt-2 border border-zinc-700">Apply Changes</button>
+         </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script src="assets/js/core.js"></script>
+  <script src="assets/js/create-studio.js"></script>
+</body>
+</html>
